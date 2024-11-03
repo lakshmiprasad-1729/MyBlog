@@ -18,8 +18,11 @@ function Account() {
     const [user,setUser]=useState(false);
 
     useEffect(()=>{
-       setUser(JSON.parse(localStorageService.getData()).authData)
+       if(!(JSON.parse(localStorageService.getData()).status)){
+         setUser(true)
+       }
     },[])
+
     useEffect(()=>{
        if(error!==false){
         setTimeout(()=>setError(false),10000)

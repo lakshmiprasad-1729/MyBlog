@@ -44,7 +44,7 @@ export default function TinyEditor() {
 
 
   return (
-    user?(
+    (user)?(
       <Container maxWidth="lg" sx={{mt:"8rem",maxWidth:"100dvw",minHeight:"100dvh"}}>
       <Grid2 minWidth={{xs:"20rem",md:"30rem"}}>
      <Alert variant="outlined" sx={{display:(error?"flex":"none"),minwidth:"80dvw"}} severity="error">{error}</Alert>
