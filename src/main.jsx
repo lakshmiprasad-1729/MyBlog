@@ -16,7 +16,6 @@ import Navbar from './components/BasicComponents/Navbar.jsx';
 import { Box } from '@mui/material';
 import ReadMyPost from './components/Readpost/ReadMypost.jsx';
 import UpdatePost from './components/Posts/UpdatePost.jsx';
-import HandleGoogleLogin from './components/handleGoogleLogin.jsx';
 import Register from './components/BasicComponents/Register.jsx';
 import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
@@ -42,10 +41,6 @@ const router = createBrowserRouter([
       {
           path:'/',
           element:<Allposts/>
-      },
-      {
-          path:'/:secret/:userId',
-          element:<HandleGoogleLogin/>
       },
       {
          path:"/add-post",
