@@ -20,7 +20,7 @@ function Account() {
       ;(async()=>{
          AuthService.getUserStatus()
          .then(data=>data==true?setUser(true):setUser(false))
-      })
+      })()
     },[])
 
     useEffect(()=>{
