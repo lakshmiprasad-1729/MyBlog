@@ -79,35 +79,29 @@ class authService {
     }
 
     async getUser(){
-        try {
+        
             const userdata = await this.account.get();
             return userdata;
-        } catch (error) {
-            console.log("error at current user details",error);
-        }
+         
     }
      async getUserStatus (){
         try {
             await this.account.get();
             return true;
         } catch (error) {
-            console.log("error at current user details",error);
+            return error.message
         }
      }
     async getCurrentUser(){
-        try {
-            const userdata = await this.account.get();
+        const userdata = await this.account.get();
             return userdata;
-        } catch (error) {
-            console.log("error at current user details",error);
-        }
     }
 
     async logOutFromAllDevices(){
         try {
             await this.account.deleteSessions();
         } catch (error) {
-            console.log("error at log out from all devices",error);
+            return error.message
         }
     }
 

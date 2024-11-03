@@ -28,7 +28,6 @@ class databaseService{
             )
             return {active:true,msg:"uploaded"}
           } catch (error) {
-            console.log("error while creating a file or document at databaseService" , error.message)
             return {active:false,msg:error.message}
           }
     }
@@ -45,7 +44,7 @@ class databaseService{
              )
         }
         catch(error){
-           console.log(error.message)
+            return error.message
         }
     }
 
@@ -62,7 +61,7 @@ class databaseService{
              )
         }
         catch(error){
-           console.log(error)
+            return error.message
         }
     }
 
@@ -79,7 +78,7 @@ class databaseService{
              )
         }
         catch(error){
-           console.log(error.message)
+            return error.message
         }
     }
 
@@ -97,7 +96,7 @@ class databaseService{
              )
         }
         catch(error){
-           console.log(error.message)
+            return error.message
         }
     }
     async listDocumentByFileId(fileId){
@@ -111,7 +110,7 @@ class databaseService{
              )
         }
         catch(error){
-           console.log(error.message)
+            return error.message
         }
     }
 
@@ -138,7 +137,7 @@ class databaseService{
                 fileId
             )
         } catch (error) {
-           console.log(error) 
+            return error.message
         }
     }
     
@@ -160,7 +159,7 @@ class databaseService{
                 ImageFormat.Webp // output (optional)
             )
         } catch (error) {
-           console.log(error) 
+            return error.message
         }
     }
 
