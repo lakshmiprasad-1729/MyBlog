@@ -2,11 +2,11 @@ import { NavLink , useNavigate} from 'react-router-dom'
 import {useDispatch} from 'react-redux';
 import AuthService from '../../appwrite/authService.js'
 import { useEffect, useState } from 'react';
-import {authLogin, authLogout} from '../../Store/authSlice.js'
+import {authLogout} from '../../Store/authSlice.js'
 import localStorageService from '../../assets/localStorage.js';
 import { AppBar ,Container, styled, Toolbar ,Box ,ImageListItem ,Typography ,Drawer, MenuItem as muiMenuItem, IconButton,Divider, CircularProgress} from "@mui/material";
 import MuiButton from '@mui/material/Button';
-import Sharingan from '.././sharingan.png'
+import Sharingan from '../Icon/sharingan.png'
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useSearchParams } from "react-router-dom";
@@ -51,31 +51,27 @@ const MenuItem=styled(muiMenuItem)(()=>({
 
 
 export default function Navbar() {
-    const [logoutStatus,setLogoutStatus] = useState(false);
     const [open,setOpen]= useState(false)
     const dispatch= useDispatch();
     const navigate = useNavigate();
-    const [status,setStatus] = useState(false)
+    const [userStatus,setuserStatus] = useState(false)
+    const [loading,setLoading] = useState(false);
     const [searchparams,setSearchParams] = useSearchParams();
 
    
 useEffect(()=>{
-   
-   if ( localStorageService.getData()) {
-       dispatch(authLogin(JSON.parse( localStorageService.getData()).userdata));
-    }
+    let user = JSON.parse(localStorageService.getData())
     let q=searchparams.get('secret')
     let p=searchparams.get('userId')
-    let userStatus = JSON.parse(localStorageService.getData())
-     if(!userStatus || !userStatus.status){
+     if(!user.status && p && q ){
       AuthService.google(p,q)
       .then((data)=>typeof data==='object'?localStorageService.setData(data):null)
       .catch((error)=>console.log(error)
       )
-      setStatus(true)
+      setuserStatus(true)
     }
     else
-    userStatus.status?setStatus(true):setStatus(false)
+    user.status?setuserStatus(true):setuserStatus(false)
    
 },[])
   
@@ -105,12 +101,17 @@ const navItems=[
 
 
 async function HandleLogOut(){
-    setLogoutStatus(true)
-    await AuthService.Logout()
-    dispatch(authLogout());
-    setStatus((prev)=>!prev)
-     localStorageService.logoutData();
-    navigate('/')
+    setLoading(true)
+   const result = await AuthService.Logout()
+    if(result===true){
+        dispatch(authLogout());
+        localStorageService.logoutData();
+        setuserStatus(false)
+        navigate('/')
+    }
+    else{
+        setLoading(false)
+    }
 }
 
 function handleDrawer(){
@@ -157,15 +158,15 @@ return(
 
            </Box>
 
-            <Box sx={{display:(status?"none":"flex")}}>
+            <Box sx={{display:(userStatus?"none":"flex")}}>
                 <Box sx={{display:{xs:"none",md:"flex"} }}>
                    <MuiButton onClick={()=>navigate('/login')}  variant="outlined" sx={{fontSize:14,textTransform:"capitalize",p:"4px",mr:"4px",'&:focus':{outline:"none"},border:"none",color:"white"}}>Login</MuiButton>
                    <MuiButton onClick={()=>navigate('/register')} variant="contained" sx={{fontSize:14,textTransform:"capitalize",py:"2px",px:"4px",'&:focus':{outline:"none"},mr:"2rem",bgcolor:"white",color:"black"}}>Register</MuiButton>
                 </Box>
             </Box>
 
-            <Box sx={{display:(status?"flex":"none")}}>
-            {logoutStatus?  <CircularProgress/>:''}
+            <Box sx={{display:(userStatus?"flex":"none")}}>
+            {loading?  <CircularProgress/>:''}
                <MuiButton onClick={()=>HandleLogOut()} variant="contained" sx={{fontSize:14,textTransform:"capitalize",py:"2px",px:"4px",'&:focus':{outline:"none"},mr:"2rem",bgcolor:"white",color:"black",display:{xs:"none",md:"inline"}}}>Logout</MuiButton>
             </Box>
 
@@ -197,7 +198,7 @@ return(
                             </MenuItem>
                          ))}
                          <Divider sx={{my:3,bgcolor:"whitesmoke"}}/>
-                         <Box sx={{display:(status?"none":"grid"),gap:2}}>
+                         <Box sx={{display:(userStatus?"none":"grid"),gap:2}}>
                          <Button 
                          onClick={()=>navigate('/register')}
                          variant="outlined"
@@ -215,9 +216,9 @@ return(
                          </Box>
 
 
-                        <Box sx={{display:(status?"grid":"none")}}>
+                        <Box sx={{display:(userStatus?"grid":"none")}}>
                       <Box sx={{display:"flex",marginTop:1,}}>
-                         {logoutStatus?  <CircularProgress/>:''}
+                         {loading?  <CircularProgress/>:''}
                       <Button
                          onClick={()=>HandleLogOut()}
                          variant="outlined"

@@ -5,11 +5,9 @@ import {
 } from "react-router-dom";
 import Store from './Store/Store.js';
 import { Provider } from 'react-redux';
-import { lazy ,Suspense } from 'react';
 import Allposts from './components/Posts/Allposts.jsx';
 import Myposts from './components/Posts/Myposts.jsx';
 import Readpost from './components/Readpost/Readpost.jsx';
-import MainLoader from './components/LoadingAnimation/MainLoader.jsx';
 import Account from './components/Account/Account.jsx';
 import NotFound404 from './components/LoadingAnimation/NotFound404.jsx';
 import Navbar from './components/BasicComponents/Navbar.jsx';
@@ -19,19 +17,15 @@ import UpdatePost from './components/Posts/UpdatePost.jsx';
 import Register from './components/BasicComponents/Register.jsx';
 import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
-
-
-const TinyEditor = lazy(()=> import('./components/Editor/Editor.jsx'));
-const LoadedApp = lazy(()=>import('./App.jsx'))
+import App from './App.jsx'
+import TinyEditor from './components/Editor/Editor.jsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element:<Suspense>
-    <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
-      <LoadedApp/>
-    </Box>
-    </Suspense>,
+    element:<Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
+    <App/>
+   </Box>,
   errorElement:  <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
     <Navbar/>
     <NotFound404/>
@@ -44,9 +38,7 @@ const router = createBrowserRouter([
       },
       {
          path:"/add-post",
-         element:<Suspense fallback={<MainLoader/>}>
-          <TinyEditor/>
-         </Suspense>
+         element:<TinyEditor/>
        },
        {
           path:'/my-post',

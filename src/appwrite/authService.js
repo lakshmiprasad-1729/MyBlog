@@ -44,7 +44,7 @@ class authService {
             await this.account.deleteSession('current')
             return true;
         } catch (error) {
-            console.log("error at logout",error.message);
+            return error.message
         }
     }
 
