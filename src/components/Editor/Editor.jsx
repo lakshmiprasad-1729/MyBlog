@@ -1,6 +1,5 @@
 import {  useEffect, useState } from "react";
 import DatabaseService from '../../appwrite/databaseService.js'
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Editor } from '@tinymce/tinymce-react';
 import {  Alert, Box, Button, CircularProgress, Container, Grid2, Typography } from "@mui/material";
@@ -16,7 +15,6 @@ export default function TinyEditor() {
     const [editorStatus,setEditorStatus] = useState(false);
     const [error,setError] = useState(false);
     const [user,setUser]= useState(false);
-    let userdata = useSelector(state=>state.authentication.userdata)
     const navigate = useNavigate();    
     const {control,handleSubmit} = useForm(({
       defaultValues:{
@@ -27,11 +25,14 @@ export default function TinyEditor() {
 
     const handledata = async(data) => {
       setLoadingStatus(true)
+      const imageData=(document.getElementById('imageSource').files[0])?await DatabaseService.uploadFile(document.getElementById('imageSource').files[0]):false;
      const user= await AuthService.getCurrentUser();
-     const imageData=(document.getElementById('imageSource'))?await DatabaseService.uploadFile(document.getElementById('imageSource').files[0]):false;
-     const result= await DatabaseService.createFile(data.title,String(data.content),userdata.$id,imageData?imageData.$id:'',user.name);
-     result.active?navigate('/'):setError(result.msg)
+     if(imageData  && user){
+        const result= await DatabaseService.createFile(data.title,String(data.content),user.$id,imageData?imageData.$id:'',user.name);
+        result.active?navigate('/'):setError(result.msg)
+     }
      setLoadingStatus(false)
+     setError("eroror at uploading file check internet connectivity ,file is required")
     };
 
     useEffect(()=>{
@@ -47,7 +48,7 @@ export default function TinyEditor() {
   (user)?(
     <Container maxWidth="lg" sx={{mt:"8rem",maxWidth:"100dvw",minHeight:"100dvh"}}>
     <Grid2 minWidth={{xs:"20rem",md:"30rem"}}>
-   <Alert variant="outlined" sx={{display:(error?"flex":"none"),minwidth:"80dvw"}} severity="error">{error}</Alert>
+   <Alert variant="outlined" sx={{display:(error?"flex":"none"),fontWeight:"900",minwidth:"80dvw"}} severity="error">{error}</Alert>
      <form onSubmit={handleSubmit(handledata)}>
 
     <Grid2 my={"1rem"}>
@@ -80,12 +81,10 @@ export default function TinyEditor() {
        skin='oxide-dark'
        cloudChannel="7-dev"
        init={{
-         // height: 500, // Adjust the height as needed
          setup:()=>setEditorStatus(true),
          license_key: 'gpl',
          selector:"textarea",
          content_css:'Editor.css',
-        //  skin:"dark-oxide",
          color_default_background:"black",
          menubar: true,
          plugins: [

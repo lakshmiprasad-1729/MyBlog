@@ -108,7 +108,6 @@ export default function ReadMyPost() {
         </div>
           <div>
           <Button onClick={()=>navigate(`/read-my-post/edit/${postDetails.$id}`)} variant="contained" sx={{color:"white",marginLeft:"1rem"}}>Edit</Button>
-          {/* <CircularProgress/> */}
           </div>
         </div>
   </div>
