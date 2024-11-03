@@ -200,14 +200,14 @@ return(
                          <Divider sx={{my:3,bgcolor:"whitesmoke"}}/>
                          <Box sx={{display:(userStatus?"none":"grid"),gap:2}}>
                          <Button 
-                         onClick={()=>navigate('/register')}
+                         onClick={()=>navigate('/login')}
                          variant="outlined"
                          sx={{border:"1px solid white",p:"6px",textAlign:"center",borderRadius:"0.5rem",marginTop:1,'&:focus':{borderColor:"whitesmoke"}}}
                          >
                             Sign in
                          </Button>
                          <Button 
-                         onClick={()=>navigate('/login')}
+                         onClick={()=>navigate('/register')}
                          variant="contained"
                          sx={{p:"6px",textAlign:"center",color:"black",bgcolor:"white",borderRadius:"0.5rem"}}
                          >
