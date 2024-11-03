@@ -7,7 +7,6 @@ import Register from './components/BasicComponents/Register.jsx';
 import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
 import Container from './components/container.jsx';
-// import TinyEditor from './components/Editor.jsx';
 import Store from './Store/Store.js';
 import { Provider } from 'react-redux';
 import { lazy ,Suspense } from 'react';
