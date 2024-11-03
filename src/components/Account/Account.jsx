@@ -1,9 +1,12 @@
-import { Box,Container,InputLabel,Grid2 as Grid, Button, CircularProgress, Alert } from "@mui/material"
+import { Box,Container,InputLabel,Grid2 as Grid, Button, CircularProgress, Alert} from "@mui/material"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import AuthService from "../../appwrite/authService"
 import InputComponent from "../Mui/Input"
+import localStorageService from "../../assets/localStorage"
 
 function Account() {
+   const navigate = useNavigate();
     const [name,setName] = useState('')
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
@@ -12,7 +15,11 @@ function Account() {
     const [loading,setLoading] = useState(false)
     const [status,setStatus] = useState(false);
     const [error,setError] = useState(false);
+    const [user,setUser]=useState(false);
 
+    useEffect(()=>{
+       setUser(JSON.parse(localStorageService.getData()).authData)
+    },[])
     useEffect(()=>{
        if(error!==false){
         setTimeout(()=>setError(false),10000)
@@ -54,7 +61,8 @@ function Account() {
        
     }
   return (
-    <Container maxWidth="lg" sx={{display:"flex",justifyContent:"center",}}>
+     user?(
+      <Container maxWidth="lg" sx={{display:"flex",justifyContent:"center",}}>
       <Grid gap={2} sx={{width:"30rem"}}>
              <Box sx={{marginTop:"8rem"}}>
              <Box sx={{display:(loading?'flex':'none'),justifyContent:"center",my:"1rem"}}> <CircularProgress/></Box>
@@ -86,6 +94,14 @@ function Account() {
                    </Box>
       </Grid>
     </Container>
+     ):(
+      <Box sx={{width:"100dvw",height:"100dvh",display:"flex",justifyContent:"center",alignItems:"center"}}>
+       <Grid >
+       <Button variant="contained" onClick={()=>navigate('/login')}>Login</Button>
+       <Button variant="contained" sx={{mx:"1rem"}} onClick={()=>navigate('/register')}>Register</Button>
+       </Grid>
+      </Box>
+     )
   )
 }
 
