@@ -26,9 +26,6 @@ export default function Myposts() {
   useEffect(()=>{
     
       if (user) {
-      //   DatabaseService.listUserDocuments(user.$id)
-      // .then((docs)=>setData(docs.documents))
-      // .catch((err)=>console.log(err))
       ;(async()=>{
         const listdata = await DatabaseService.listUserDocuments(user.$id);
         listdata.total==0?setDataStatus(true):setData(listdata.documents)
@@ -43,7 +40,6 @@ export default function Myposts() {
       setData1(data.slice(0,4));
       setData2(data.slice(4,10));
       setDataStatus(true)
-     //  console.log(data1)
      }
      (data.length===9)?( setLastId(data[9])):(setLastId(false))
    

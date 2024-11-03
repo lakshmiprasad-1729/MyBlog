@@ -20,7 +20,6 @@ import HandleGoogleLogin from './components/handleGoogleLogin.jsx';
 import Register from './components/BasicComponents/Register.jsx';
 import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
-import Container from './components/Container.jsx';
 
 
 const TinyEditor = lazy(()=> import('./components/Editor/Editor.jsx'));
@@ -30,14 +29,15 @@ const router = createBrowserRouter([
   {
     path: "/",
     element:<Suspense>
-      <Container>
+    <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
       <LoadedApp/>
-    </Container>
+    </Box>
     </Suspense>,
-  errorElement:<Container>
+  errorElement:  <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
     <Navbar/>
     <NotFound404/>
-  </Container>,
+  </Box>,
+
     children:[
       {
           path:'/',
@@ -71,9 +71,10 @@ const router = createBrowserRouter([
       },
       {
         path:'/account',
-        element:<Container>
+        element:
+        <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
           <Account/>
-        </Container>
+          </Box>
       }
     ]
   },

@@ -2,14 +2,12 @@ import { Grid2 as Grid ,CardMedia ,Divider,Box ,Avatar,Typography} from '@mui/ma
 import {StyledCard,StyledCardContent,StyledTypography } from './MuiCustom.js'
 import PropTypes from 'prop-types'
 import DatabaseService from '../../appwrite/databaseService.js'
-// import AuthService from '../../appwrite/authService.js'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import parse from 'html-react-parser'
 
 export default function MuiCard({imageid,title,content,date,author,fileid,component="allposts"}){
     const [imageurl,setImageurl] = useState('');
-    // const [authorName,setAuthorName] = useState('');
      const  changedDateFormat = new Date(date).toLocaleDateString();
 
     const navigate= useNavigate();
@@ -17,9 +15,6 @@ export default function MuiCard({imageid,title,content,date,author,fileid,compon
     DatabaseService.getFilePreview(imageid)
     .then((imagedata)=> setImageurl(imagedata.href))
  
-    // AuthService.getUser(author)
-    // .then((data)=>console.log(data))
-   
     return (
         <Grid size={{xs:11,md:6}}>
         <StyledCard
