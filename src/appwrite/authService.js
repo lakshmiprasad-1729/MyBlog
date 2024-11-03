@@ -86,7 +86,14 @@ class authService {
             console.log("error at current user details",error);
         }
     }
-
+     async getUserStatus (){
+        try {
+            await this.account.get();
+            return true;
+        } catch (error) {
+            console.log("error at current user details",error);
+        }
+     }
     async getCurrentUser(){
         try {
             const userdata = await this.account.get();

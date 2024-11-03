@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import AuthService from "../../appwrite/authService"
 import InputComponent from "../Mui/Input"
-import localStorageService from "../../assets/localStorage"
 
 function Account() {
    const navigate = useNavigate();
@@ -18,9 +17,10 @@ function Account() {
     const [user,setUser]=useState(false);
 
     useEffect(()=>{
-       if(!(JSON.parse(localStorageService.getData()).status)){
-         setUser(true)
-       }
+      ;(async()=>{
+         AuthService.getUserStatus()
+         .then(data=>data==true?setUser(true):setUser(false))
+      })
     },[])
 
     useEffect(()=>{
