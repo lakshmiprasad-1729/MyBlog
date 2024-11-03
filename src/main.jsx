@@ -19,8 +19,6 @@ import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
 import App from './App.jsx'
 import TinyEditor from './components/Editor/Editor.jsx';
-import { useEffect } from 'react';
-
 
 
 const router = createBrowserRouter([
