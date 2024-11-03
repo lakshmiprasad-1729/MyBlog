@@ -102,16 +102,11 @@ const navItems=[
 
 async function HandleLogOut(){
     setLoading(true)
-   const result = await AuthService.Logout()
-    if(result===true){
+   await AuthService.Logout()
         dispatch(authLogout());
         localStorageService.logoutData();
         setuserStatus(false)
         navigate('/')
-    }
-    else{
-        setLoading(false)
-    }
 }
 
 function handleDrawer(){
