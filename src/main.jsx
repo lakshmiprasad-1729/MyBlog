@@ -3,10 +3,6 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Register from './components/BasicComponents/Register.jsx';
-import './index.css'
-import Login from './components/BasicComponents/Login.jsx';
-import Container from './components/container.jsx';
 import Store from './Store/Store.js';
 import { Provider } from 'react-redux';
 import { lazy ,Suspense } from 'react';
@@ -21,6 +17,11 @@ import { Box } from '@mui/material';
 import ReadMyPost from './components/Readpost/ReadMypost.jsx';
 import UpdatePost from './components/Posts/UpdatePost.jsx';
 import HandleGoogleLogin from './components/handleGoogleLogin.jsx';
+import Register from './components/BasicComponents/Register.jsx';
+import './index.css'
+import Login from './components/BasicComponents/Login.jsx';
+import Container from './components/Container.jsx';
+
 
 const TinyEditor = lazy(()=> import('./components/Editor/Editor.jsx'));
 const LoadedApp = lazy(()=>import('./App.jsx'))
