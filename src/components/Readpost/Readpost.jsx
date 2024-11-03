@@ -55,8 +55,8 @@ export default function Readpost() {
   return (
     (postDetails)?(
       <div className="w-[100dvw]  grid justify-center items-center ">
-      <div className="bg-transparent sm:w-[65dvw] md:w-[50dvw] lg:w-[45dvw] xl:w-[40dvw] 2xl:w-[35dvw]  mt-[7rem] sm:min-h-[80dvh] rounded-xl mx-[0.5rem] sm:mx:[1rem] md:mx-[2rem] border border-gray-700 pb-[2rem] mb-[4rem]">
-          <div id="owner-info" className="text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex w-full">
+      <div className="bg-transparent mx-[2rem] w-[95dvw] md:w-[70dvw] lg:w-[60dvw] xl:w-[55dvw] 2xl:w-[55dvw]  mt-[7rem] sm:min-h-[80dvh] rounded-xl  sm:mx:[1rem] md:mx-[2rem] border border-gray-700 pb-[2rem] mb-[1rem]">
+      <div id="owner-info" className="text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex w-full">
             <div className="w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{user?user.charAt(0).toUpperCase():null}</div>
              {
                user? (
@@ -83,7 +83,7 @@ export default function Readpost() {
                   imageUrl?<img className="rounded-lg" src={imageUrl} alt="image loading" />:null
                 }    
               </div> 
-              <div className="text-neutral-200 text-[0.9rem] mt-[1rem] w-full" id="description ">
+              <div className="text-neutral-200 text-[0.9rem] md:text-[1.1rem] xl:text-[1.2rem] mt-[1rem] w-full" id="description ">
                 <div className="w-full  px-[1rem] text-pretty">
                 {postDetails?parse(postDetails.content):null}
                 </div>

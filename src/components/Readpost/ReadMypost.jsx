@@ -91,7 +91,7 @@ export default function ReadMyPost() {
                   imageUrl?<img className="rounded-lg" src={imageUrl} alt="image loading" />:null
                 }    
               </div> 
-              <div className="text-neutral-200 text-[1.1rem] xl:text-[1.2rem] mt-[1rem] w-full" id="description ">
+              <div className="text-neutral-200 text-[0.9rem] md:text-[1.1rem] xl:text-[1.2rem] mt-[1rem] w-full" id="description ">
                 <div className="w-full  px-[1rem] text-pretty">
                 {
                  postDetails? parse(postDetails.content):null
