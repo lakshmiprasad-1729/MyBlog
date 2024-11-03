@@ -1,12 +1,12 @@
 import DatabaseService from "../../appwrite/databaseService.js"
 import { useEffect, useState } from 'react';
-import { Box, Container,Grid2 as Grid, Typography,Button, Grid2 } from "@mui/material"
+import { Box, Container,Grid2 as Grid, Typography,Button, Grid2, Alert } from "@mui/material"
 import MuiCard from "../Mui/MuiCard.jsx";
 import Latest from "../Mui/Latest.jsx";
-import localStorageService from "../../assets/localStorage.js";
 import PostsLoader from "../LoadingAnimation/PostsLoader.jsx";
 import EmptyPosts from "../LoadingAnimation/EmptyPosts.jsx"
 import { useNavigate } from "react-router-dom";
+import AuthService from "../../appwrite/authService.js";
 
 export default function Myposts() {
   const navigate = useNavigate();
@@ -19,11 +19,18 @@ export default function Myposts() {
    const [firstId,setFirstId] = useState('')
    const [nextPageStatus,setNextPageStatus] = useState(false);
    const [prevPageStatus,setPrevPageStatus] = useState(false);
+   const [error,setError] = useState(false)
   
   useEffect(()=>{
-    setUser(JSON.parse(localStorageService.getData()).userdata)
+   AuthService.getCurrentUser()
+   .then(data=>typeof data=='object'?setUser(data):setError('problem in fetching data'));
   },[])
  
+  useEffect(()=>{
+    setTimeout(()=>{
+      setError(false);
+    },7000)
+  },[error])
 
   useEffect(()=>{
     
@@ -50,7 +57,6 @@ export default function Myposts() {
     if(lastId){
      DatabaseService.listDocumentsNext(lastId.$id)
      .then((data)=>(data==undefined || data.documents.length==undefined || data.documents.length==0)?setNextPageStatus(true):setNextPageStatus(false))
-     .catch((err)=>console.log(err.message))
     }
  
     lastId?setNextPageStatus(true):setNextPageStatus(false)
@@ -61,7 +67,6 @@ export default function Myposts() {
     if(firstId){
       DatabaseService.listDocumentsPrev(firstId.$id)
       .then((data)=>(data==undefined || data.documents.length==undefined ||  data.documents.length==0)?setPrevPageStatus(true):setPrevPageStatus(false))
-      .catch((err)=>console.log(err.message))
     }
 
     firstId?setPrevPageStatus(true):setPrevPageStatus(false)
@@ -100,6 +105,7 @@ export default function Myposts() {
       (dataStatus)?(
         <Box sx={{width:"100dvw", display:"flex",justifyContent:"center"}}>
         <Typography variant="h6" sx={{marginTop:"8rem",color:"white",display:(data.length?"none":"inline")}}>No results</Typography>
+        <Alert variant="filled" sx={{marginTop:"8rem",color:"white",display:(!error?"none":"inline")}}>{error}</Alert>
       <Container component={'main'} maxWidth="lg" sx={{display:(data.length?"flex":"none"),flexDirection:"column"}}>
         {data?(
            <Typography variant="h4" sx={{fontFamily:"monospace",mt:13,color:"whitesmoke",p:3}}>
