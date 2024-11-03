@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import DatabaseService from "../../appwrite/databaseService";
 import parse from 'html-react-parser'
 import PostsLoader from "../LoadingAnimation/PostsLoader";
+import { Typography } from "@mui/material";
 
 export default function Readpost() {
     const [postDetails,setPostDetails]= useState(false);
@@ -10,15 +11,16 @@ export default function Readpost() {
     const [imageUrl,setImageUrl]=useState(null)
     const [time,setTime]= useState();
     const {fileId} = useParams();
-   
-   useEffect(()=>{
-    if(fileId){
-        DatabaseService.listDocumentByFileId(fileId)
-    .then((data)=>setPostDetails(data.documents[0]))
-    .catch((error)=>console.log(error))
-    }
-   },[fileId])
 
+    
+    useEffect(()=>{
+      if(fileId){
+        DatabaseService.listDocumentByFileId(fileId)
+        .then((data)=>setPostDetails(data.documents[0]))
+        .catch((error)=>console.log(error))
+      }
+    },[fileId])
+    
     useEffect(()=>{
          if(postDetails){
           setUser(postDetails.ownerName)
@@ -45,8 +47,9 @@ export default function Readpost() {
           }
          }
 
-
     },[postDetails])
+
+    
 
 
   return (
@@ -67,9 +70,11 @@ export default function Readpost() {
           <div id="w-full post grid ">
               <div id="title" className="w-full flex justify-center text-white text-lg font-semibold font-mono mt-[1rem]">
                   <div className="w-4/5 flex justify-start">
-                  {
+                 <Typography variant="inherit">
+                 {
                       postDetails?postDetails.title:null
                   }
+                 </Typography>
                   </div>
               </div>
               
@@ -80,10 +85,7 @@ export default function Readpost() {
               </div> 
               <div className="text-neutral-200 text-[0.9rem] mt-[1rem] w-full" id="description ">
                 <div className="w-full  px-[1rem] text-pretty">
-                {
-                 postDetails? parse(`
-                  ${postDetails.content}`):null
-                }
+                {postDetails?parse(postDetails.content):null}
                 </div>
               </div>
           </div>

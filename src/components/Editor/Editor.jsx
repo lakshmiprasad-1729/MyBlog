@@ -124,12 +124,12 @@ export default function TinyEditor() {
 
   <Grid2 my={"1rem"} container justifyContent={"space-between"}>
     <Grid2>
-    <Typography sx={{color:"white"}}>select</Typography>
+    <Typography sx={{color:"white",marginTop:"2rem"}}>select</Typography>
     <input type="file" name="imagefromuser" id="imageSource"  className=" text-white image-inp" accept=".jpg, .jpeg, .png"   />
     </Grid2>
-    <Grid2>
+    <Grid2 container justifyContent={"center"} sx={{marginTop:"2rem"}}>
     <CircularProgress sx={{display:(loadingStatus?"inline":"none"),marginRight:"1rem"}}/>
-    <Button type="submit" variant="contained">Submit</Button>
+    <Button type="submit" sx={{display:(loadingStatus?"none":"flex")}} variant="contained">Submit</Button>
     </Grid2>
   </Grid2>
 
@@ -138,9 +138,9 @@ export default function TinyEditor() {
  </Container>
   ):(
     <Box sx={{width:"100dvw",height:"100dvh",display:"flex",justifyContent:"center",alignItems:"center"}}>
-    <Grid2>
+    <Grid2 >
     <Button variant="contained" onClick={()=>navigate('/login')}>Login</Button>
-    <Button variant="contained" sx={{mx:"1rem"}} onClick={()=>navigate('/register')}>Register</Button>
+    <Button variant="contained" onClick={()=>navigate('/register')}>Register</Button>
     </Grid2>
    </Box>
   )

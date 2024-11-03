@@ -9,7 +9,6 @@ import parse from 'html-react-parser'
 export default function MuiCard({imageid,title,content,date,author,fileid,component="allposts"}){
     const [imageurl,setImageurl] = useState('');
      const  changedDateFormat = new Date(date).toLocaleDateString();
-
     const navigate= useNavigate();
 
     DatabaseService.getFilePreview(imageid)
@@ -35,7 +34,7 @@ export default function MuiCard({imageid,title,content,date,author,fileid,compon
         <Divider sx={{bgcolor:"rgb(31 41 55)"}}/>
         <StyledCardContent>
           <StyledTypography variant='h6' gutterBottom>{title}</StyledTypography>
-          <Box sx={{color:"white",overflow:"hidden",display:'-webkit-box', WebkitBoxOrient:'vertical', WebkitLineClamp:2,    textOverflow:"ellipsis"}}>
+          <Box  sx={{color:"white",overflow:"hidden",display:'-webkit-box', WebkitBoxOrient:'vertical', WebkitLineClamp:2,    textOverflow:"ellipsis"}}>
             {parse(content)}
           </Box>
         </StyledCardContent>
