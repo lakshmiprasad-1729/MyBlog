@@ -65,7 +65,7 @@ export default function ReadMyPost() {
   return (
     (postDetails)?(
       <div className="w-[100dvw]  grid justify-center items-center ">
-      <div className="bg-transparent sm:w-[65dvw] md:w-[50dvw] lg:w-[45dvw] xl:w-[40dvw] 2xl:w-[35dvw]  mt-[7rem] sm:min-h-[80dvh] rounded-xl mx-[2rem] border border-gray-700 pb-[2rem] mb-[1rem]">
+      <div className="bg-transparent sm:w-[65dvw] md:w-[50dvw] lg:w-[45dvw] xl:w-[40dvw] 2xl:w-[35dvw]  mt-[7rem] sm:min-h-[80dvh] rounded-xl mx-[0.5rem] sm:mx:[1rem] md:mx-[2rem] border border-gray-700 pb-[2rem] mb-[1rem]">
           <div id="owner-info" className="text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex w-full">
             <div className="w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{user?user.charAt(0).toUpperCase():null}</div>
              {
