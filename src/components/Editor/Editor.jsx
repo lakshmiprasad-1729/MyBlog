@@ -69,7 +69,6 @@ export default function TinyEditor() {
     <Grid2 my={"1rem"} >
      <Typography variant="outlined"sx={{color:"white"}}>Description :</Typography>
      {
-     (editorStatus)?(
       <Controller
       name="content"
       control={control}
@@ -82,6 +81,7 @@ export default function TinyEditor() {
        cloudChannel="7-dev"
        init={{
          // height: 500, // Adjust the height as needed
+         setup:()=>setEditorStatus(true),
          license_key: 'gpl',
          selector:"textarea",
          content_css:'Editor.css',
@@ -119,10 +119,8 @@ export default function TinyEditor() {
        />
       )}
    />
-     ):(
-       <Box my={"1rem"}><EditorLoading/></Box>
-     )
-   }
+  }
+  <Box sx={{display:(editorStatus?"none":'flex')}} my={"1rem"}><EditorLoading/></Box>
     </Grid2>
 
   <Grid2 my={"1rem"} container justifyContent={"space-between"}>
