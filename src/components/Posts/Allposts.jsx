@@ -117,7 +117,7 @@ export default function Allposts() {
           ))):null
       }
         </Grid>
-       <Box sx={{display:"flex",margin:"1rem",justifyContent:"center",}}>
+       <Box sx={{display:{md:"flex"},margin:"1rem",justifyContent:"center",}}>
         <Button onClick={()=>PrevPage()} variant="contained" sx={{fontSize:14,'&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((prevPageStatus || lastId==''?"rgb(30 64 175)":"rgb(59 130 246)")),textTransform:"capitalize",color:"white",pointerEvents:(prevPageStatus || firstId==''?"none":"auto")}}>Prev</Button>
         <Button onClick={()=>NextPage()} variant="contained" sx={{fontSize:14 ,mx:"1rem", '&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((nextPageStatus || lastId==''?"rgb(30 64 175)":"rgb(59 130 246)")),textTransform:"capitalize",border:"none",color:"white",pointerEvents:(nextPageStatus || lastId==''?"none":"auto")}}>Next</Button>
     </Box>
