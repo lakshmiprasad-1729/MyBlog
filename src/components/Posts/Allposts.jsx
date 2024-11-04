@@ -35,14 +35,14 @@ export default function Allposts() {
 
 
   useEffect(()=>{
-    if(data.length){
+    if(data?data.length:false){
      setFirstId(data[0])
      setData1(data.slice(0,4));
      setData2(data.slice(4,10));
      setDataStatus(true)
     //  console.log(data1)
     }
-    (data.length===9)?( setLastId(data[9])):(setLastId(false))
+    (data?data.length===9:false)?( setLastId(data[9])):(setLastId(false))
    
   },[data])
 
