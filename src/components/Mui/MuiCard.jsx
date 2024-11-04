@@ -32,9 +32,9 @@ export default function MuiCard({imageid,title,content,date,author,fileid,compon
         }}
         />
         <Divider sx={{bgcolor:"rgb(31 41 55)"}}/>
-        <StyledCardContent>
+        <StyledCardContent sx={{height:{lg:"10rem"}}}>
           <StyledTypography variant='h6' gutterBottom>{title}</StyledTypography>
-          <Box  sx={{color:"white",overflow:"hidden",display:'-webkit-box', WebkitBoxOrient:'vertical', WebkitLineClamp:2,    textOverflow:"ellipsis"}}>
+          <Box  sx={{color:"white",overflow:"hidden",display:'-webkit-box', WebkitBoxOrient:'vertical', WebkitLineClamp:3,    textOverflow:"ellipsis"}}>
             {parse(content)}
           </Box>
         </StyledCardContent>

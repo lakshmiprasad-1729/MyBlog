@@ -68,7 +68,7 @@ export default function Readpost() {
              }
           </div>
           <div id="w-full post grid ">
-              <div id="title" className="w-full flex justify-center text-white text-lg font-semibold font-mono mt-[1rem]">
+              <div id="title" className="w-full flex justify-center text-white text-[1.1rem] md:text-[1.2rem] lg:text-[1.3rem]  font-semibold mt-[1rem]">
                   <div className="w-4/5 flex justify-start">
                  <Typography variant="inherit">
                  {

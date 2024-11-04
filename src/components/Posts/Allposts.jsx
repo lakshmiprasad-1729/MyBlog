@@ -101,7 +101,7 @@ export default function Allposts() {
       <Typography variant="h4" sx={{fontFamily:"monospace",mt:13,color:"whitesmoke",p:3}}>
         Blog  :
       </Typography>
-      <Grid container justifyContent={"center"}  rowSpacing={2} columns={12} >
+      <Grid container justifyContent={"center"}  spacing={2} columns={12} >
          {data1?(data1.map((data)=>(
            <MuiCard fileid={data.$id} key={data.$id} imageid={data.imageid} title={data.title} content={data.content} date={data.$createdAt} author={data.ownerName}/>
          ))):null

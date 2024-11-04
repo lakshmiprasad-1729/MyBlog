@@ -146,7 +146,7 @@ class databaseService{
             return this.storage.getFilePreview(
                 import.meta.env.VITE_APPWRITE_BUCKET_ID,
                 fileId,
-                350, // width (optional)
+                0, // width (optional)
                 0, // height (optional)
                 ImageGravity.Center, // gravity (optional)
                 0, // quality (optional)
@@ -156,7 +156,7 @@ class databaseService{
                 0, // opacity (optional)
                 -360, // rotation (optional)
                 'FFFFFF', // background (optional)
-                ImageFormat.Webp // output (optional)
+                ImageFormat.Jpeg // output (optional)
             )
         } catch (error) {
             return error.message
