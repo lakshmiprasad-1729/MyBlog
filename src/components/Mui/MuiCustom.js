@@ -7,8 +7,8 @@ const StyledCard=styled(Card)(()=>({
     flexDirection:"column",
     padding:0,
     backdropFilter:'blur(50px)',
-    backgroundColor:"black",
-    outline:'0.1px solid  rgb(31 41 55)',
+    backgroundColor:"transparent",
+    outline:'1px solid  rgb(31 41 55)',
     '&:hover':{
       backgroundColor:"transparent",
       cursor:'pointer',

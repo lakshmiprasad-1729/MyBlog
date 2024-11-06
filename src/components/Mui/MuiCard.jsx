@@ -1,11 +1,10 @@
-import { Grid2 as Grid ,CardMedia ,Divider,Box ,Avatar,Typography} from '@mui/material'
+import { Grid2 as Grid ,CardMedia ,Divider,Box ,Avatar,Typography, IconButton} from '@mui/material'
 import {StyledCard,StyledCardContent,StyledTypography } from './MuiCustom.js'
 import PropTypes from 'prop-types'
 import DatabaseService from '../../appwrite/databaseService.js'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import parse from 'html-react-parser'
-
 export default function MuiCard({imageid,title,content,date,author,fileid,component="allposts"}){
     const [imageurl,setImageurl] = useState('');
      const  changedDateFormat = new Date(date).toLocaleDateString();
@@ -48,6 +47,8 @@ export default function MuiCard({imageid,title,content,date,author,fileid,compon
             {author.charAt(0)}
            </Avatar>
               <Typography sx={{pl:2}} variant="caption" color="white">{author}</Typography>
+              <IconButton aria-label="" >
+              </IconButton>
            </Box>
          
          

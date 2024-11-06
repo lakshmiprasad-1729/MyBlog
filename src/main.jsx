@@ -19,6 +19,8 @@ import './index.css'
 import Login from './components/BasicComponents/Login.jsx';
 import App from './App.jsx'
 import TinyEditor from './components/Editor/Editor.jsx';
+import AccountProfile from './components/Account/AccountProfile.jsx';
+import UserAccount from './components/Account/userAccount.jsx';
 
 
 const router = createBrowserRouter([
@@ -61,8 +63,19 @@ const router = createBrowserRouter([
         path:'/account',
         element:
         <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
-          <Account/>
-          </Box>
+          <AccountProfile/>
+          </Box>,
+      }, 
+      {
+        path:'/change-account-details',
+        element:
+        <Box className='w-[100dvw] min-h-[100dvh] flex justify-center bg-gradient-to-r from-black  to-custom1'>
+        <Account/>
+        </Box>
+      },{
+        path:'/view-account/:userId',
+        element:
+        <UserAccount/>
       }
     ]
   },

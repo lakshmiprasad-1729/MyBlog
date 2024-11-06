@@ -14,7 +14,7 @@ class databaseService{
 
     async createFile(title ,content ,userid,imageid,ownerName){
           try {
-           await this.database.createDocument(
+           const data = await this.database.createDocument(
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_COLLECTION_ID,
                 ID.unique(),
@@ -23,10 +23,14 @@ class databaseService{
                     content:content,
                     imageid:imageid,
                     userid:userid,
-                    ownerName:ownerName
+                    ownerName:ownerName,
+                    likes:[
+                        ''
+                    ],
+
                 }
             )
-            return {active:true,msg:"uploaded"}
+            return {active:true,msg:data}
           } catch (error) {
             return {active:false,msg:error.message}
           }
@@ -212,6 +216,80 @@ class databaseService{
            return true
         } catch (error) {
             return error.message;
+        }
+    }
+    
+    async updateRelation(doc,likeid){
+        try {
+            let ids =[];
+            doc.likes.map((singeledoc)=>
+                ids.push(singeledoc.$id)
+              )
+          if(doc.likes.length>0){
+            return await this.database.updateDocument(
+                import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                doc.$id,
+                {
+                    likes:[
+                        likeid,
+                       ...ids
+                    ]
+                }
+            )
+          }
+          else if(doc.likes.length===0){
+            return await this.database.updateDocument(
+                import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                doc.$id,
+                {
+                    likes:[
+                        likeid
+                    ]
+                }
+            )
+          }
+        } catch(err) {
+           console.log(err.message)
+        }
+    }
+    
+    async updateCommentRelation(doc,commentid){
+        try {
+            // console.log(commentid)
+            let ids =[];
+            doc.comments.map((singeledoc)=>
+                ids.push(singeledoc.$id)
+              )
+            if(doc.comments.length>0){
+                return await this.database.updateDocument(
+                    import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                    import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                    doc.$id,
+                    {
+                        comments:[
+                            commentid,
+                            ...ids
+                        ]
+                    }
+                )
+              }
+              else if(doc.comments.length===0){
+                return await this.database.updateDocument(
+                    import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                    import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                    doc.$id,
+                    {
+                        comments:[
+                            commentid
+                        ]
+                    }
+                )
+              }
+            
+        } catch (error) {
+            return error.message
         }
     }
 }

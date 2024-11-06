@@ -7,6 +7,7 @@ import EditorLoading from "../LoadingAnimation/EditorLoading.jsx";
 import AuthService from "../../appwrite/authService.js";
 import { Controller,useForm } from "react-hook-form";
 import InputComponent from '../Mui/Input.jsx'
+import localStorageService from "../../assets/localStorage.js";
 
 
 
@@ -37,10 +38,8 @@ export default function TinyEditor() {
 
     useEffect(()=>{
       setTimeout(()=>setEditorStatus(true),5000)
-        ;(async()=>{
-           AuthService.getUserStatus()
-           .then(data=>data==true?setUser(true):setUser(false))
-        })()
+       
+        setUser( JSON.parse(localStorageService.getData()).userdata)
     },[])
 
 
@@ -136,14 +135,14 @@ export default function TinyEditor() {
 </form>
 </Grid2>
  </Container>
-  ):(
+  ):user==null?(
     <Box sx={{width:"100dvw",height:"100dvh",display:"flex",justifyContent:"center",alignItems:"center"}}>
-    <Grid2 >
-    <Button variant="contained" onClick={()=>navigate('/login')}>Login</Button>
-    <Button variant="contained" onClick={()=>navigate('/register')}>Register</Button>
-    </Grid2>
-   </Box>
-  )
+     <Grid2>
+     <Button variant="contained" onClick={()=>navigate('/login')}>Login</Button>
+     <Button variant="contained" sx={{mx:"1rem"}} onClick={()=>navigate('/register')}>Register</Button>
+     </Grid2>
+    </Box>
+  ):null
 
   )
 }

@@ -6,7 +6,7 @@ import Latest from "../Mui/Latest.jsx";
 import PostsLoader from "../LoadingAnimation/PostsLoader.jsx";
 import EmptyPosts from "../LoadingAnimation/EmptyPosts.jsx"
 import { useNavigate } from "react-router-dom";
-import AuthService from "../../appwrite/authService.js";
+import localStorageService from "../../assets/localStorage.js";
 
 export default function Myposts() {
   const navigate = useNavigate();
@@ -22,8 +22,9 @@ export default function Myposts() {
    const [error,setError] = useState(false)
   
   useEffect(()=>{
-   AuthService.getCurrentUser()
-   .then(data=>typeof data=='object'?setUser(data):setError('problem in fetching data'));
+
+   let data = JSON.parse(localStorageService.getData()).userdata;
+    setUser(data);
   },[])
  
   useEffect(()=>{
@@ -136,13 +137,13 @@ export default function Myposts() {
         <PostsLoader/>
        </Box>
       )
-    ):(
+    ):user==null?(
       <Box sx={{width:"100dvw",height:"100dvh",display:"flex",justifyContent:"center",alignItems:"center"}}>
        <Grid2>
        <Button variant="contained" onClick={()=>navigate('/login')}>Login</Button>
        <Button variant="contained" sx={{mx:"1rem"}} onClick={()=>navigate('/register')}>Register</Button>
        </Grid2>
       </Box>
-    )
+    ):null
   )
 }

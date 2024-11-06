@@ -7,7 +7,7 @@ import Parse from 'html-react-parser'
 import { useNavigate } from 'react-router-dom'
 
 
-export default function Latest({title,content,date,fileid,component="allposts"}){//add authorid
+export default function Latest({title,content,date,fileid,component="allposts",ownerName=''}){//add authorid
     const navigate = useNavigate();
     return (
         <Grid size={{xs:11,md:6}}>
@@ -26,7 +26,7 @@ export default function Latest({title,content,date,fileid,component="allposts"})
             sx={{bgcolor:deepOrange[500]}}>
             {"FB"}
            </Avatar>
-              <Typography sx={{pl:2}} variant="caption" color="initial">{''}</Typography>
+              <Typography sx={{pl:2,color:"white"}} variant="caption">{ownerName}</Typography>
            </Box>
          
          
@@ -47,4 +47,5 @@ Latest.propTypes={
     date:PropTypes.string,
     fileid:PropTypes.string,
     component:PropTypes.string,
+    ownerName:PropTypes.string,
 }

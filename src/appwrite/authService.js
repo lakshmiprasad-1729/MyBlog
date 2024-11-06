@@ -126,6 +126,14 @@ class authService {
            return error.message
         }
     }
+
+    // async getUserById(){
+    //     try {
+    //         await this.account.
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 }
 
 const AuthService = new authService();

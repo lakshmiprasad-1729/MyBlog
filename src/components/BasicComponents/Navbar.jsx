@@ -127,6 +127,7 @@ return(
         <Container maxWidth="lg">
            <StyledToolbar variant="dense" disableGutters>
            <Box sx={{display:"flex",alignItems:"center"}}>
+              <Box onClick={()=>navigate('/')} display={"flex"}>
               <ImageListItem
               sx={{width:"4rem",display:"flex",color:"white"}}>
                <img
@@ -134,7 +135,8 @@ return(
                loading="lazy"
                src={Sharingan} alt="imageLoading" />
               </ImageListItem>
-               <Typography variant="body1" sx={{fontWeight:700}} color="white">My Blog</Typography>
+               <Typography variant="body1" pt="0.4rem" sx={{fontWeight:700}} color="white">My Blog</Typography>
+              </Box>
 
                <Box>
                     <Box 
