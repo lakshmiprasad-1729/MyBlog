@@ -38,64 +38,67 @@ export default function Myposts() {
       if (user) {
       ;(async()=>{
         const listdata = await DatabaseService.listUserDocuments(user.$id);
-        listdata.total==0?setDataStatus(true):setData(listdata.documents)
+        if(typeof listdata=='object'){
+          setData(listdata.documents);
+          setDataStatus(true);
+        }
       })()
     }
     
   },[user])
   
   useEffect(()=>{
-    if(data.length){
-      setFirstId(data[0])
-      setData1(data.slice(0,4));
-      setData2(data.slice(4,10));
-      setDataStatus(true)
-     }
-     (data.length===9)?( setLastId(data[9])):(setLastId(false))
+    if(data){
+      if(data.length){
+        setFirstId(data[0])
+        setData1(data.slice(0,4));
+        setData2(data.slice(4,10));
+        if(data.length==10){
+          setLastId(data[9])
+        }
+       }
+    }
    
   },[data])
+
   useEffect(()=>{
     if(lastId){
-     DatabaseService.listDocumentsNext(lastId.$id)
-     .then((data)=>(data==undefined || data.documents.length==undefined || data.documents.length==0)?setNextPageStatus(true):setNextPageStatus(false))
+     DatabaseService.listUsersNextDocuments(user.$id,lastId.$id)
+     .then((data)=>typeof data=='object'?(data.documents.length!=0?setNextPageStatus(true):setNextPageStatus(false)):setNextPageStatus(false))
     }
  
-    lastId?setNextPageStatus(true):setNextPageStatus(false)
- 
-    },[lastId])
+    },[lastId,user])
 
     useEffect(()=>{
     if(firstId){
-      DatabaseService.listDocumentsPrev(firstId.$id)
-      .then((data)=>(data==undefined || data.documents.length==undefined ||  data.documents.length==0)?setPrevPageStatus(true):setPrevPageStatus(false))
+      DatabaseService.listUsersPrevDocuments(user.$id,firstId.$id)
+      .then((data)=>typeof data=='object'?(data.documents.length!=0?setPrevPageStatus(true):setPrevPageStatus(false)):setPrevPageStatus(false))
     }
 
-    firstId?setPrevPageStatus(true):setPrevPageStatus(false)
-
-   },[firstId])
+   },[firstId,user])
 
     async function NextPage(){
 
       try {
         setDataStatus(false);
-        let documentData = await DatabaseService.listDocumentsNext(lastId.$id);
+        let documentData = await DatabaseService.listUsersNextDocuments(user.$id,lastId.$id);
           setData(documentData.documents);
           setDataStatus(true);
-        } catch (error) {
-        console.log(error)
+          setNextPageStatus(false);
+        } catch{
+          setError("error while fetching next page details")
       }
     }
 
     async function PrevPage(){
       try {
         setDataStatus(false);
-        let documentData = await DatabaseService.listDocumentsPrev(firstId.$id);      
+        let documentData = await DatabaseService.listUsersPrevDocuments(user.$id,firstId.$id);      
           setData(documentData.documents);
           setDataStatus(true);
-      
-  
-      } catch (error) {
-        console.log(error)
+          setPrevPageStatus(false);
+      } catch {
+        setError("error while fetching prev page details")
       }
     }
 
@@ -127,8 +130,8 @@ export default function Myposts() {
         }
           </Grid>
          <Box sx={{display:"flex",width:"100dvw",justifyContent:"center"}}>
-          <Button onClick={()=>PrevPage()} variant="contained" sx={{fontSize:14,px:"4px", m:"1rem", '&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((prevPageStatus || lastId==''?"rgb(30 64 175)":"rgb(59 130 246)")),textTransform:"capitalize",color:"white",pointerEvents:(prevPageStatus || firstId==''?"none":"auto")}}>Prev</Button>
-          <Button onClick={()=>NextPage()} variant="contained" sx={{fontSize:14 ,px:"4px",m:"1rem", '&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((nextPageStatus || lastId==''?"rgb(30 64 175)":"rgb(59 130 246)")),textTransform:"capitalize",border:"none",color:"white",pointerEvents:(nextPageStatus || lastId==''?"none":"auto")}}>Next</Button>
+          <Button onClick={()=>PrevPage()} variant="contained" sx={{display:(prevPageStatus?"flex":"none"), fontSize:14,px:"4px", m:"1rem", '&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((prevPageStatus ?"rgb(59 130 246)":'')),textTransform:"capitalize",color:"white",pointerEvents:(prevPageStatus ?"auto":"none")}}>Prev</Button>
+          <Button onClick={()=>NextPage()} variant="contained" sx={{display:(nextPageStatus?"flex":"none"), fontSize:14 ,px:"4px",m:"1rem", '&:focus':{outline:"none"},borderRadius:"0.5rem",bgcolor:((nextPageStatus ?"rgb(59 130 246)":'')),textTransform:"capitalize",border:"none",color:"white",pointerEvents:(nextPageStatus ?"auto":"none")}}>Next</Button>
       </Box>
       </Container>
     </Box>

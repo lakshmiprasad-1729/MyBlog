@@ -1,4 +1,4 @@
-import { Databases ,Client, ID ,Storage, ImageFormat, ImageGravity, Query, Permission, Role} from "appwrite";
+import { Databases ,Client, ID ,Storage, ImageFormat, ImageGravity, Query} from "appwrite";
 
 class databaseService{
     client = new Client();
@@ -103,6 +103,43 @@ class databaseService{
             return error.message
         }
     }
+
+    async listUsersNextDocuments(userId,lastId){
+        try{
+             return await this.database.listDocuments(
+                import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                [
+                    Query.equal("userid",[userId]),
+                    Query.orderDesc("$createdAt"),
+                    Query.cursorAfter(lastId),
+                    Query.limit(10)
+                ]
+             )
+        }
+        catch(error){
+            return error.message
+        }
+    }
+
+    async listUsersPrevDocuments(userId,firstId){
+        try{
+             return await this.database.listDocuments(
+                import.meta.env.VITE_APPWRITE_DATABASE_ID,
+                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+                [
+                    Query.equal("userid",[userId]),
+                    Query.orderDesc("$createdAt"),
+                    Query.cursorBefore(firstId),
+                    Query.limit(10)
+                ]
+             )
+        }
+        catch(error){
+            return error.message
+        }
+    }
+
     async listDocumentByFileId(fileId){
         try{
              return await this.database.listDocuments(
@@ -150,17 +187,17 @@ class databaseService{
             return this.storage.getFilePreview(
                 import.meta.env.VITE_APPWRITE_BUCKET_ID,
                 fileId,
-                0, // width (optional)
-                0, // height (optional)
-                ImageGravity.Center, // gravity (optional)
-                0, // quality (optional)
-                0, // borderWidth (optional)
-                "1e293b", // borderColor (optional)
-                6, // borderRadius (optional)
-                0, // opacity (optional)
-                -360, // rotation (optional)
-                'FFFFFF', // background (optional)
-                ImageFormat.Jpeg // output (optional)
+                0, 
+                0,
+                ImageGravity.Center, 
+                0,
+                0, 
+                "1e293b",
+                6, 
+                0, 
+                -360, 
+                'FFFFFF', 
+                ImageFormat.Jpeg 
             )
         } catch (error) {
             return error.message
@@ -189,30 +226,14 @@ class databaseService{
         }
     }
 
-    async updatePost({data},newimageid,postid,userid){
+    async updatePost(data,postid){
         try {
-            await this.database.updateDocument(
-                import.meta.env.VITE_APPWRITE_DATABASE_ID,
-                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-                postid,
-                {data},
-                [
-                    Permission.update(Role.user(userid))
-                ]
-            )
-           newimageid?(
-            await this.database.updateDocument(
-                import.meta.env.VITE_APPWRITE_DATABASE_ID,
-                import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-                postid,
-                {
-                    imageid:newimageid
-                },
-                [
-                    Permission.update(Role.user(userid))
-                ]
-            )
-           ):null
+           await this.database.updateDocument(
+            import.meta.env.VITE_APPWRITE_DATABASE_ID,
+            import.meta.env.VITE_APPWRITE_COLLECTION_ID,
+            postid,
+            data,
+           )
            return true
         } catch (error) {
             return error.message;

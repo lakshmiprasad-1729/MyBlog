@@ -8,7 +8,7 @@ InputComponent.proptypes={
     required:PropTypes.bool,
  }
 
-function InputComponent({field,type,placeholder,required=true}) {
+function InputComponent({field,type='text',placeholder='',required=true}) {
 
   return (
     <TextField

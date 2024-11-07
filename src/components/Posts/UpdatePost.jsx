@@ -10,7 +10,7 @@ import InputComponent from '../Mui/Input.jsx'
 export default function UpdatePost() {
     const [postDetails,setPostDetails]=useState([])
   const [loadingStatus,setLoadingStatus] = useState(false);
-    const [editorStatus,setEditorStatus] = useState(false);
+    const [editorStatus,setEditorStatus] = useState(true);
     const [error,setError] = useState(false);
     const {fileId} = useParams();
     const [content,setContent] =useState(false)
@@ -44,35 +44,83 @@ export default function UpdatePost() {
         }
      ))
 
+
+
     const handledata = async(data) => {
       setLoadingStatus(true)
-
-
      const imageData=(document.getElementById('imageSource').files[0])?await DatabaseService.uploadFile(document.getElementById('imageSource').files[0]):false;
      imageData?(
         await DatabaseService.deleteFile(postDetails.imageid)
     ):null
 
-
-    if(data.title!='' || content!=''){
-      const result=data.title!=''?(
-        data.content!=''? await DatabaseService.updatePost({title:data.title,content:String(data.content)},imageData?imageData.$id:false,postDetails.$id,postDetails.userid):
-        await DatabaseService.updatePost({title:title},imageData?imageData.$id:false,postDetails.$id,postDetails.userid)
-      ):(
-        await DatabaseService.updatePost({content:String(data.content)},imageData?imageData.$id:false,postDetails.$id,postDetails.userid)
-      )
-      result===true?navigate('/my-post'):setError(result)
+    if(data.title=='' && data.content=='' && !imageData){
+      setError('there are no change please change something to edit');
       setLoadingStatus(false)
+      return null;
+    }
+    
+    console.log()
+    if (typeof imageData=='object') {
+      if(data.title!='' && data.content!=''){
+           const result = await DatabaseService.updatePost({title:data.title,content:data.content,imageid:imageData.$id},postDetails.$id,postDetails.userid)
+           result==true?setLoadingStatus(false):setError(result)
+           navigate('/my-post')
+      }
+      if(data.title!='' && data.content==''){
+        const result = await DatabaseService.updatePost({title:data.title,imageid:imageData.$id},postDetails.$id,postDetails.userid)
+           result==true?setLoadingStatus(false):setError(result)
+           navigate('/my-post')
+      }
+      if(data.title=='' && data.content!=''){
+        const result = await DatabaseService.updatePost({content:data.content,imageid:imageData.$id},postDetails.$id,postDetails.userid)
+           result==true?setLoadingStatus(false):setError(result)
+           navigate('/my-post')
+      }
+      if(data.title=='' && data.content==''){
+        const result = await DatabaseService.updatePost({imageid:imageData.$id},postDetails.$id,postDetails.userid)
+           result==true?setLoadingStatus(false):setError(result)
+           navigate('/my-post')
+      }
+     
     }
     else{
-      setError('title and description shouldn`t be empty')
-      setLoadingStatus(false);
+      if(data.title!='' && data.content!=''){
+        const result = await DatabaseService.updatePost({title:data.title,content:data.content},postDetails.$id,postDetails.userid)
+        result==true?setLoadingStatus(false):setError(result)
+        navigate('/my-post')
+      }
+      if(data.title!='' && data.content==''){
+        const result = await DatabaseService.updatePost({title:data.title},postDetails.$id,postDetails.userid)
+        result==true?setLoadingStatus(false):setError(result)
+        navigate('/my-post')
+      }
+      if(data.title=='' && data.content!=''){
+        const result = await DatabaseService.updatePost({content:data.content},postDetails.$id,postDetails.userid)
+           result==true?setLoadingStatus(false):setError(result)
+           navigate('/my-post')
+      }
     }
+
+    setLoadingStatus(false)
+    // if(data.title!='' || content!=''){
+    //   const result=data.title!=''?(
+    //     data.content!=''? await DatabaseService.updatePost({title:data.title,content:String(data.content)},imageData?imageData.$id:false,postDetails.$id,postDetails.userid):
+    //     await DatabaseService.updatePost({title:title},imageData?imageData.$id:false,postDetails.$id,postDetails.userid)
+    //   ):(
+    //     await DatabaseService.updatePost({content:String(data.content)},imageData?imageData.$id:false,postDetails.$id,postDetails.userid)
+    //   )
+    //   result===true?navigate('/my-post'):setError(result)
+    //   setLoadingStatus(false)
+    // }
+    // else{
+    //   setError('title and description shouldn`t be empty')
+    //   setLoadingStatus(false);
+    // }
 
     };
 
     useEffect(()=>{
-      setTimeout(()=>setEditorStatus(true),1000)
+      setTimeout(()=>setError(false),1000)
     },[])
 
 
@@ -84,15 +132,13 @@ export default function UpdatePost() {
 
      <Grid2 my={"1rem"}>
       <Typography variant="outlined" sx={{color:"white"}}>Title</Typography>
-      {title?(
         <Controller
         name="title"
         control={control}
         render={({field})=>(
-          <InputComponent required={false}  field={field} type={"text"} placeholder={title} />
+          <InputComponent required={false}  field={field} type={"text"} placeholder={title?title:''} />
         )}
         />
-      ):null}
      </Grid2>
 
      <Grid2 my={"1rem"} >
@@ -111,7 +157,7 @@ export default function UpdatePost() {
         <Editor
         apiKey={`${import.meta.env.VITE_TINYMCE_API_KEY}`}
         className="bg-black"
-        initialValue={`${content}`}
+        initialValue={`${content?content:''}`}
         skin='oxide-dark'
         cloudChannel="7-dev"
         init={{
