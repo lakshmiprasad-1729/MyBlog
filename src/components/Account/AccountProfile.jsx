@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import localStorageService from "../../assets/localStorage";
 import AppwriteSubscribe from "../../appwrite/appwriteSubscribe";
 import { useNavigate } from "react-router-dom";
+import FollowersProfile from './userProfile'
 
 function AccountProfile() {
     const navigate = useNavigate();
@@ -28,22 +29,7 @@ function AccountProfile() {
     }  
     },[user])
 
-    function stringToColor(string) {
-        let hash = 0;
-        let i;
-      
-        for (i = 0; i < string.length; i += 1) {
-          hash = string.charCodeAt(i) + ((hash << 5) - hash);
-        }
-      
-        let color = '#';
-      
-        for (i = 0; i < 3; i += 1) {
-          const value = (hash >> (i * 8)) & 0xff;
-          color += `00${value.toString(16)}`.substr(-2);
-        }      
-        return color;
-      }
+
 
   return (
    user?(<Container maxWidth="lg" sx={{marginTop:"8rem"}}>
@@ -77,12 +63,7 @@ function AccountProfile() {
               {subscribedAccounts?(
                 subscribedAccounts.length!==0?(
                    subscribedAccounts.map((singledoc,index)=>(
-                    
-                      <Button key={index} display={"grid"} onClick={()=>navigate(`/view-account/${singledoc.owner}`)}>
-                        <Avatar sx={{bgcolor:(()=>stringToColor(singledoc.ownerName)),width:"3rem",height:"3rem",color:"white"}}>{singledoc.ownerName.charAt(0)}</Avatar>
-                        <Typography variant="caption" sx={{color:'white',textTransform:'capitalize',textAlign:"center",p:"0.25rem"}}>{singledoc.ownerName}</Typography>
-                      </Button>
-        
+                     <FollowersProfile key={index} docid={singledoc} handleLogin={()=>navigate(`/view-account/${singledoc.owner}`)}/>
                         ))
                 ):<Typography sx={{display:"flex",justifyContent:"center",width:"100dvw",color:"white",textTransform:"capitalize"}} variant="h6"> No results exist</Typography>
                  
@@ -102,5 +83,10 @@ function AccountProfile() {
   ):null
 )
 }
+
+
+
+
+
 
 export default AccountProfile

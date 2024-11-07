@@ -4,12 +4,16 @@ import AuthService from '../../appwrite/authService.js'
 import { useEffect, useState } from 'react';
 import {authLogout} from '../../Store/authSlice.js'
 import localStorageService from '../../assets/localStorage.js';
-import { AppBar ,Container, styled, Toolbar ,Box ,ImageListItem ,Typography ,Drawer, MenuItem as muiMenuItem, IconButton,Divider, CircularProgress} from "@mui/material";
+import { AppBar ,Container, styled, Toolbar ,Box ,ImageListItem ,Typography ,Drawer, MenuItem as muiMenuItem, IconButton,Divider, CircularProgress, DialogActions, Dialog, DialogTitle, DialogContent, Avatar} from "@mui/material";
 import MuiButton from '@mui/material/Button';
 import Sharingan from '../Icon/sharingan.png'
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useSearchParams } from "react-router-dom";
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import InputComponent from '../Mui/Input.jsx';
+import AppwriteProfiles from '../../appwrite/appwriteProfiles.js';
+import stringToColor from '../Account/colorAlgo.js';
 
 
 const StyledToolbar = styled(Toolbar)(()=>({
@@ -52,11 +56,14 @@ const MenuItem=styled(muiMenuItem)(()=>({
 
 export default function Navbar() {
     const [open,setOpen]= useState(false)
+    const [dialogOpen,setDialogOpen]= useState(false)
     const dispatch= useDispatch();
     const navigate = useNavigate();
     const [userStatus,setuserStatus] = useState(false)
     const [loading,setLoading] = useState(false);
     const [searchparams,setSearchParams] = useSearchParams();
+    const [search,setSearch] = useState(false);
+    const [accounts,setAccounts] = useState(false);
 
    
 useEffect(()=>{
@@ -74,6 +81,15 @@ useEffect(()=>{
     user.status?setuserStatus(true):setuserStatus(false)
    
 },[])
+
+useEffect(()=>{
+   if(search && search!=''){
+   (async()=>{
+    let result = await AppwriteProfiles.searchProfile(search);
+    result?setAccounts(result.documents):null
+   })()
+   }
+},[search])
   
 
 const navItems=[
@@ -112,6 +128,11 @@ async function HandleLogOut(){
 function handleDrawer(){
     setOpen((prev)=>!prev)
 }
+function handleClose(){
+    setDialogOpen(false);
+}
+
+
 
 
 return(
@@ -163,9 +184,46 @@ return(
             </Box>
 
             <Box sx={{display:(userStatus?"flex":"none")}}>
-            {loading?  <CircularProgress/>:''}
-               <MuiButton onClick={()=>HandleLogOut()} variant="contained" sx={{fontSize:14,textTransform:"capitalize",py:"2px",px:"4px",'&:focus':{outline:"none"},mr:"2rem",bgcolor:"white",color:"black",display:{xs:"none",md:"inline"}}}>Logout</MuiButton>
+                <IconButton onClick={()=>setDialogOpen(true)}><SearchOutlinedIcon sx={{color:"white",m:"0.3rem",width:"2rem"}}/></IconButton>
+            {loading?  <CircularProgress/>:
+               <MuiButton onClick={()=>HandleLogOut()} variant="contained" sx={{height:"2rem",fontSize:14,textTransform:"capitalize",py:"2px",px:"4px",'&:focus':{outline:"none"},mt:"0.5rem",mr:"2rem",bgcolor:"white",color:"black",display:{xs:"none",md:"inline"}}}>Logout</MuiButton>
+            }
             </Box>
+
+
+
+            <Dialog
+        open={dialogOpen}
+        onClose={handleClose}
+        scroll={'paper'}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle  id="scroll-dialog-title" sx={{width:{xs:"20rem" ,md:"30rem"},bgcolor:"rgb(17 24 39)",color:"white"}}>
+            <InputComponent
+             field={{onChange:(e)=>setSearch(e.target.value.toLocaleLowerCase().replace(/\s|[@#$%^_-]|[0-9]/g, ""))}} type={"text"} placeholder={"enter account name"}/>
+        </DialogTitle>
+        <DialogContent dividers={scroll === 'paper'}  sx={{width:{xs:"20rem" ,md:"30rem"},bgcolor:"rgb(17 24 39)"}}>
+         {
+            typeof accounts=='object'?
+                accounts.length!=0?(
+                    accounts.map((singledoc,index)=>(
+                        <Button key={index} display={"grid"}  onClick={()=>navigate(`/view-account/${singledoc.userid}`)}>
+                           <Avatar sx={{bgcolor:(()=>stringToColor(singledoc.name)),width:"3rem",height:"3rem",color:"white"}}>{singledoc?singledoc.name.charAt(0):''}</Avatar>
+                           <Typography variant="caption" sx={{color:'white',textTransform:'capitalize',textAlign:"center",p:"0.25rem"}}>{singledoc?singledoc.name:''}</Typography>
+                         </Button>
+                    ))
+                ):<Typography variant='h6' sx={{color:"white",m:"1rem"}}>No result found</Typography>
+            :null
+         }
+        </DialogContent>
+        <DialogActions sx={{bgcolor:"rgb(17 24 39)",width:{xs:"20rem" ,md:"30rem"},}}>
+          <Button onClick={handleClose}>Cancel</Button>
+         </DialogActions> 
+      </Dialog>
+
+
+
 
             <Box sx={{display:{xs:"flex",md:"none"},alignItems:"center"}} onClick={handleDrawer} >
                <MenuIcon sx={{border:"1px solid #475569",py:"3px",px:"6px",borderRadius:"4px","&:hover":{bgcolor:"#111827"},mr:"2rem"}}/>

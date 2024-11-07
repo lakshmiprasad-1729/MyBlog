@@ -32,7 +32,7 @@ export default function Comment({commentDetails}){
     setComment(commentDetails?commentDetails.comment:null)
     setEditedComment(commentDetails?commentDetails.comment:null)
     const user = JSON.parse(localStorageService.getData()).userdata;
-    commentDetails?(user.$id===commentDetails.commentedUser?setStatus(true):false):false
+    commentDetails?((user?(user.$id===commentDetails.commentedUser):false)?setStatus(true):false):false
 
     },[commentDetails])
 
@@ -46,7 +46,7 @@ export default function Comment({commentDetails}){
         <StyledCard sx={{py:"0.5rem",px:"1rem",my:'0.5rem'}}>
         <Box display={"flex"} justifyContent={"space-between"}>
         <Box sx={{display:"flex"}}>
-        <Avatar  onClick={()=>navigate(`/user-account/${commentDetails.commentedUser}`)} sx={{bgcolor:'gray',color:"white",width:"2rem",height:"2rem"}}>{commentDetails?commentDetails.userName.charAt(0):''}</Avatar>
+        <Avatar  onClick={()=>navigate(`/view-account/${commentDetails.commentedUser}`)} sx={{bgcolor:'gray',color:"white",width:"2rem",height:"2rem"}}>{commentDetails?commentDetails.userName.charAt(0):''}</Avatar>
         <StyledTypography variant="body1" sx={{py:'3px',px:'0.5rem',color:"white",textTransform:"capitalize",fontSize:'0.9rem'}}>{commentDetails?commentDetails.userName:''}</StyledTypography>
        </Box>
        <Box display={(status?"flex":"none")}>

@@ -2,16 +2,24 @@ import { Grid2 as Grid ,CardMedia ,Divider,Box ,Avatar,Typography, IconButton} f
 import {StyledCard,StyledCardContent,StyledTypography } from './MuiCustom.js'
 import PropTypes from 'prop-types'
 import DatabaseService from '../../appwrite/databaseService.js'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import parse from 'html-react-parser'
-export default function MuiCard({imageid,title,content,date,author,fileid,component="allposts"}){
+import AppwriteProfiles from '../../appwrite/appwriteProfiles.js'
+export default function MuiCard({imageid,title,content,date,authorid,fileid,component="allposts"}){
     const [imageurl,setImageurl] = useState('');
+    const [author,setAuthor]=useState(false);
      const  changedDateFormat = new Date(date).toLocaleDateString();
     const navigate= useNavigate();
 
-    DatabaseService.getFilePreview(imageid)
-    .then((imagedata)=> setImageurl(imagedata.href))
+    useEffect(()=>{
+      DatabaseService.getFilePreview(imageid)
+      .then((imagedata)=> setImageurl(imagedata.href))
+
+      AppwriteProfiles.getDocument(authorid)
+      .then(data=>setAuthor(data.documents[0]))
+    },[])
+
  
     return (
         <Grid size={{xs:11,md:6}}>
@@ -44,9 +52,9 @@ export default function MuiCard({imageid,title,content,date,author,fileid,compon
            <Box sx={{display:'flex', alignItems:"center"}}>
            <Avatar
             sx={{bgcolor:"rgb(55 65 81)"}}>
-            {author.charAt(0)}
+            {author?author.name.charAt(0):''}
            </Avatar>
-              <Typography sx={{pl:2}} variant="caption" color="white">{author}</Typography>
+              <Typography sx={{pl:2}} variant="caption" color="white">{author?author.name:''}</Typography>
               <IconButton aria-label="" >
               </IconButton>
            </Box>
@@ -67,7 +75,7 @@ MuiCard.propTypes={
     imageid:PropTypes.string,
     title:PropTypes.string,
     content:PropTypes.string,
-    author:PropTypes.string,
+    authorid:PropTypes.string,
     date:PropTypes.string,
     fileid:PropTypes.string,
     component:PropTypes.string,

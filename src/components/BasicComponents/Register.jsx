@@ -8,6 +8,7 @@ import {Container as Container,Divider, Typography,Box,InputLabel, FormControl, 
 import { StyledCard } from "../Mui/MuiCustom.js";
 import InputComponent from "../Mui/Input.jsx";
 import GoogleIcon from '../Icon/GoogleIcon.png'
+import AppwriteProfiles from "../../appwrite/appwriteProfiles.js";
 
 export default function Register() {
     const { control, handleSubmit } = useForm({
@@ -46,8 +47,14 @@ export default function Register() {
             if(login===true){
                   const user = await AuthService.getCurrentUser();
                   user? localStorageService.setData(user):null;
-                  setRegisterStatus(true);
-                  navigate('/')
+                  const result = await AppwriteProfiles.createProfile(user.$id,user.name,user.email);
+                   if(result===true){
+                    setRegisterStatus(true);
+                    navigate('/')
+                   }
+                   else{
+                    setLoginError(result)
+                   }
                 }
                 else{
                   setLoginError(login)

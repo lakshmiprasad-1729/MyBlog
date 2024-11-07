@@ -12,6 +12,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import localStorageService from "../../assets/localStorage";
 import AppwriteLikes from "../../appwrite/appwriteLike";
 import AppwriteComments from "../../appwrite/appwriteComment";
+import AppwriteProfiles from "../../appwrite/appwriteProfiles";
 
 export default function ReadMyPost() {
     const [postDetails,setPostDetails]= useState(false);
@@ -19,6 +20,7 @@ export default function ReadMyPost() {
     const [currentUser,setcurrentUser] = useState(null); //current userdetails
     const [imageUrl,setImageUrl]=useState(null)
     const [time,setTime]= useState();
+    const [name,setName] = useState();
     const {fileId} = useParams();
     const [deleteStatus,setDeleteStatus] = useState(false);
     const [pointer,setPointer] = useState(false); 
@@ -40,7 +42,13 @@ export default function ReadMyPost() {
    useEffect(()=>{
       
     let data = JSON.parse( localStorageService.getData());
-    setcurrentUser(data.userdata);      
+    setcurrentUser(data.userdata); 
+    
+    data.userdata?(
+      AppwriteProfiles.getDocument(data.userdata.$id)
+      .then(data=>typeof data==='object'?setName(data.documents[0].name):setError(data))
+      .catch(err=>setError(err))
+    ):null
   },[])
 
     useEffect(()=>{
@@ -149,11 +157,11 @@ export default function ReadMyPost() {
 
        }
           <div  id="owner-info" className="text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex w-full">
-          <div onClick={()=>navigate(`/account`)} className="pointer w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{postDetails?postDetails.ownerName.charAt(0).toUpperCase():null}</div>
+          <div onClick={()=>navigate(`/account`)} className="pointer w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{name?name.charAt(0).toUpperCase():null}</div>
           {
                postDetails ? (
                   <div className="ml-[1rem]">
-                      <div>{postDetails.ownerName}</div>
+                      <div>{name?name:''}</div>
                       <div className="text-[0.7rem] mr-auto text-neutral-400">posted {time?time:null} {time==='today'?null:"ago"}</div>
                   </div>
               ):null

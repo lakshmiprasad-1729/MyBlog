@@ -115,7 +115,7 @@ export default function Myposts() {
         ):<EmptyPosts/>}
         <Grid container justifyContent={"center"}  spacing={2} columns={12} >
            {data1?(data1.map((data)=>(
-             <MuiCard component="mypost" fileid={data.$id} key={data.$id} imageid={data.imageid} title={data.title} content={data.content} date={data.$createdAt} author={data.ownerName}/>
+             <MuiCard component="mypost" fileid={data.$id} key={data.$id} imageid={data.imageid} title={data.title} content={data.content} date={data.$createdAt} authorid={data.userid}/>
            ))):null
            }
         </Grid>

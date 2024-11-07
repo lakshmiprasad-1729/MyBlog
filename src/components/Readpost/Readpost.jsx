@@ -13,6 +13,7 @@ import { StyledTypography } from "../Mui/MuiCustom";
 import InputComponent from "../Mui/Input"
 import AppwriteComments from "../../appwrite/appwriteComment"
 import AppwriteSubscribe from "../../appwrite/appwriteSubscribe";
+import AppwriteProfiles from "../../appwrite/appwriteProfiles";
 
 export default function Readpost() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function Readpost() {
     const [currentUser,setcurrentUser] = useState(null); //current userdetails
     const [imageUrl,setImageUrl]=useState(null); //imageurl manage
     const [time,setTime]= useState();   //helps in timelogic
+    const [name,setName] = useState(false);
     const {fileId} = useParams();
     const [pointer,setPointer] = useState(false); //helps in create or delete likes
     const [error,setError] = useState(false);
@@ -44,9 +46,14 @@ export default function Readpost() {
       
       let data = JSON.parse( localStorageService.getData());
       setcurrentUser(data.userdata); 
-      
-     
+
     },[])
+
+    useEffect(()=>{
+      setTimeout(()=>{
+        setError(false)
+      },7000)
+    },[error])
     
     useEffect(()=>{
          if(postDetails){
@@ -74,6 +81,9 @@ export default function Readpost() {
                 }
             }
           }
+            AppwriteProfiles.getDocument(postDetails.userid)
+            .then(data=>typeof data==='object'?setName(data.documents[0].name):setError(data))
+            .catch(err=>setError(err))
          }
 
 
@@ -108,7 +118,8 @@ export default function Readpost() {
 
 
     async function toggleLike(){
-      setPointer(true);
+      if(currentUser){
+        setPointer(true);
       if(likes.liked){
         await AppwriteLikes.removeLike(likes.liked.$id)===true?
         setLikes({num:likes.num-1,liked:false}):
@@ -116,7 +127,7 @@ export default function Readpost() {
         setPointer(false);
       }
       else{
-        if(currentUser && postDetails)
+        if(postDetails)
         {
              const newlike = await AppwriteLikes.Like(postDetails.$id,currentUser.$id)
              const likeddata = await DatabaseService.updateRelation(postDetails,newlike.$id);
@@ -124,21 +135,30 @@ export default function Readpost() {
              setPointer(false);
         }
       }
+      }
+      else{
+        setError('login or create accout to like post')
+      }
     }
 
     async function addComment(){
-      setAddCommentStatus(true)
-      if(comment && comment!==''){
-        const newComment= await AppwriteComments.createComment(postDetails.$id,currentUser.$id,comment,currentUser.name);
-        const  commenteddata = await DatabaseService.updateCommentRelation(postDetails,newComment.$id);
-        typeof commenteddata ==='object'?setCommentList(commenteddata.comments):setError(commenteddata);
-        setAddCommentStatus(false)
-        setComment(false)
+      if(currentUser){
+        setAddCommentStatus(true)
+        if(comment && comment!==''){
+          const newComment= await AppwriteComments.createComment(postDetails.$id,currentUser.$id,comment,currentUser.name);
+          const  commenteddata = await DatabaseService.updateCommentRelation(postDetails,newComment.$id);
+          typeof commenteddata ==='object'?setCommentList(commenteddata.comments):setError(commenteddata);
+          setAddCommentStatus(false)
+          setComment(false)
+        }
+        else{
+          setError('empty comment shouldn`t be commented')
+          setAddCommentStatus(false)
+  
+        }
       }
       else{
-        setError('empty comment shouldn`t be commented')
-        setAddCommentStatus(false)
-
+        setError('login to comment')
       }
       
     }
@@ -149,30 +169,22 @@ export default function Readpost() {
     },[error])
 
 
-   
-    async function Subscribe(){
-      setSubscribeStatus(true);
+    async function toggleSubscription() {
       if(currentUser){
-        const result = await AppwriteSubscribe.Subscribe(postDetails.userid,currentUser.$id,postDetails.ownerName);
+        setSubscribeStatus(true);
+       if(subscribe){
+        const result = await AppwriteSubscribe.unSubscribe(subscribe.$id);
+        result===true?setSubscribe(false):setError(result);
+        setSubscribeStatus(false);
+       }
+       else{
+        const result = await AppwriteSubscribe.Subscribe(postDetails.userid,currentUser.$id,name);
         typeof result==='object'?setSubscribe(result):setError(result);
         setSubscribeStatus(false);
+       }
       }
       else{
-        setError("please login or register to subscribe")
-        setSubscribeStatus(false);
-      }
-    }
-    
-    async function unSubscribe(){
-      setSubscribeStatus(true);
-      if(typeof subscribe === 'object'){
-         const result = await AppwriteSubscribe.unSubscribe(subscribe.$id);
-         result===true?setSubscribe(false):setError(result);
-         setSubscribeStatus(false);
-      }
-      else{
-        setError('Invalid user')
-        setSubscribeStatus(false);
+        setError('login to subscribe')
       }
     }
 
@@ -185,13 +197,13 @@ export default function Readpost() {
              error?<Alert variant="outlined" severity="error" >{error}</Alert>:null
 
        }
-      <div id="owner-info" onClick={()=>navigate(`/view-account/${postDetails.userid}`)} className="text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex justify-between ">
+      <div id="owner-info" className="cursor-pointer text-white mt-[0.7rem] ml-[1rem] md:ml-[2.5rem] flex justify-between ">
             <div className="flex">
-            <div className="w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{postDetails?postDetails.ownerName.charAt(0).toUpperCase():null}</div>
+            <div  onClick={()=>navigate(`/view-account/${postDetails.userid}`)} className="w-[2rem] h-[2rem] rounded-3xl bg-indigo-600 border border-white text-center mt-[0.25rem]">{name?name.charAt(0).toUpperCase():null}</div>
              {
                postDetails ? (
                   <div className="ml-[1rem]">
-                      <div>{postDetails.ownerName}</div>
+                      <div>{name?name:''}</div>
                       <div className="text-[0.7rem] mr-auto text-neutral-400">posted {time?time:null} {time==='today'?null:"ago"}</div>
                   </div>
               ):null
@@ -199,18 +211,11 @@ export default function Readpost() {
             </div>
              {
               subscribeStatus?<CircularProgress mr="1.5rem"/>:(
-                <Box>
-                  <Button 
-                onClick={Subscribe}
-                sx={{color:"white",height:"2rem",mr:"1rem",textTransform:"capitalize",display:(subscribe?'none':'flex')}} variant="contained">
-                   Follow
-                </Button>
                 <Button 
-                onClick={unSubscribe}
-                sx={{color:"white",height:"2rem",mr:"1rem",textTransform:"capitalize",display:(subscribe?'flex':'none')}} variant="contained">
-                   unFollow
+                onClick={toggleSubscription}
+                sx={{color:"white",height:"2rem",mr:"1rem",textTransform:"capitalize"}} variant="contained">
+                   {`${subscribe?"unfollow":"follow"}`}
                 </Button>
-                </Box>
               )
              }
           </div>
@@ -239,7 +244,7 @@ export default function Readpost() {
           <Divider sx={{my:"0.5rem",bgcolor:"#374151"}}/>
           <Box  sx={{mb:"1rem",display:"flex"}}>
               <Box sx={{display:"flex"}}>
-              <Typography variant="subtitle1" pt="0.5rem" ml={"1rem"} color="white">{likes?likes.num:''}</Typography>
+              <Typography variant="subtitle1" pt="0.5rem" ml={"1rem"} color="white">{likes?likes.num:0}</Typography>
               <IconButton sx={{mr:"0.5rem"}} onClick={toggleLike} disabled={pointer}>
                <ThumbUpIcon sx={{color:(likes?likes.liked?"blue":"whitesmoke":"whitesmoke"),}} />
               </IconButton>

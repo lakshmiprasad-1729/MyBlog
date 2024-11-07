@@ -1,11 +1,11 @@
-import { Container,Avatar,Typography, Box,Grid2 as Grid, Button, Alert, CircularProgress } from "@mui/material"
+import { Container,Avatar,Typography, Box,Grid2 as Grid, Button, Alert, CircularProgress} from "@mui/material"
 import { useEffect, useState } from "react";
 import AppwriteSubscribe from "../../appwrite/appwriteSubscribe";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import localStorageService from "../../assets/localStorage";
 import DatabaseService from "../../appwrite/databaseService"
 import Latest from "../Mui/Latest";
+import AppwriteProfiles from "../../appwrite/appwriteProfiles";
 
 
 function UserAccount() {
@@ -23,14 +23,16 @@ function UserAccount() {
      let data = JSON.parse(localStorageService.getData()).userdata;
      setCurrentUser(data);
     },[])
+  //   axios.get(`/api/?userid=${userId}`)
+  //  .then(data=>console.log(data.data))
+  //  .catch(err=>console.log(err)
+  //  )
 
     useEffect(()=>{
        if(userId){
-        axios.get(`/api/?userid=${userId}`)
-       .then(data=>setUser(data.data))
-       .catch(err=>console.log(err)
-       )
-      
+       AppwriteProfiles.getDocument(userId)
+       .then(data=>setUser(data.documents[0]))
+      .catch(err=>setError(err))
        DatabaseService.listUserDocuments(userId)
        .then(data=>typeof data=='object'?(data.documents.length!=0?setPosts(data.documents):setPosts([])):setError(data))
        .catch(err=>setError(err))
@@ -39,21 +41,24 @@ function UserAccount() {
 
     useEffect(()=>{
       if(user){
-          AppwriteSubscribe.subscribedAccounts(user.$id)
+          AppwriteSubscribe.subscribedAccounts(user.userid)
           .then(data=>data?setFollowingCount(data.documents.length):null)
           .catch(err=>setError(err))
   
-          AppwriteSubscribe.checkFollowers(user.$id)
+          AppwriteSubscribe.checkFollowers(user.userid)
           .then(data=>setFollowersCount(data))
       }  
       },[user])
 
     useEffect(()=>{
-    if(currentUser ){
-        user?(AppwriteSubscribe.checkSubscribe(user.userid,currentUser.$id)
+    if(currentUser && user ){
+       AppwriteSubscribe.checkSubscribe(user.userid,currentUser.$id)
         .then(data=>typeof data=='object'?(data.documents.length!=0?setSubscribeStatus(data.documents[0]):null):setError(data))
-        .catch(err=>setError(err))):null
+        .catch(err=>setError(err))
         setSubLoading(false);
+    }
+    else{
+      setSubLoading(false)
     }
     },[currentUser,user])
 
@@ -74,17 +79,28 @@ function UserAccount() {
         return color;
       }
 
-    async function toogleSubscription(){
-      setSubLoading(true);
+      useEffect(()=>{setTimeout(()=>setError(false),5000)},[error])
+
+    async function toggleSubscription(){
+      if(currentUser){
+        setSubLoading(true);
       if(subscribeStatus){
         const result = await AppwriteSubscribe.unSubscribe(subscribeStatus.$id);
          result?setSubscribeStatus(false):null;
+         const followers = await AppwriteSubscribe.checkFollowers(user.userid);
+         setFollowersCount(followers);
          setSubLoading(false);
       }
       else{
          const result = await AppwriteSubscribe.Subscribe(user.userid,currentUser.$id,user.name);
          typeof result=='object'?setSubscribeStatus(result):null;
+         const followers = await AppwriteSubscribe.checkFollowers(user.userid);
+         setFollowersCount(followers);
          setSubLoading(false);
+      }
+      }
+      else{
+        setError('login to subscribe')
       }
     }
 
@@ -103,16 +119,20 @@ function UserAccount() {
                {user.name}
            </Typography>
               <Box display={"grid"}>
-                 <Typography sx={{color:"white"}} variant="caption">{`followers:${followingCount?(followingCount):''}  `}</Typography>
-                 <Typography sx={{color:"white"}} variant="caption">{`following:${followersCount?(followersCount):''}  `}</Typography>
-                 <Typography sx={{color:"white"}} variant="caption">{`createdAt: ${new Date(user.$createdAt).toLocaleDateString()}`}</Typography>
+                 <Typography sx={{color:"white"}} variant="caption">{`following:${followingCount?(followingCount):followingCount==0?0:''}  `}</Typography>
+                 <Typography sx={{color:"white"}} variant="caption">{`followers:${followersCount?(followersCount):followersCount==0?0:''}  `}</Typography>
+                 <Typography sx={{color:"white"}} variant="caption">{`createdAt: ${user?(new Date(user.createdAt).toLocaleDateString()):''}`}</Typography>
                </Box>
           </Grid>
              {
-                subLoading?<CircularProgress sx={{m:"1.5rem"}}/>:(
-                  <Button variant="outlined" onClick={toogleSubscription} sx={{textTransform:"capitalize",mx:"1.5rem",my:"1rem",borderColor:"white",color:"white"}} 
+                !subLoading?(
+                  <Button variant="outlined" onClick={toggleSubscription} sx={{height:"2.5rem",textTransform:"capitalize",mx:"1.5rem",my:"1rem",borderColor:"white",color:"white"}} 
                   >{subscribeStatus?"unfollow":"follow"}</Button>
-                )
+                ):(subLoading==null?(
+                    <Button onClick={()=>setError('login to subscribe')} variant="outlined" sx={{height:"2.5rem",textTransform:"capitalize",mx:"1.5rem",my:"1rem",borderColor:"white",color:"white"}} 
+                    >Follow</Button>
+                ):<CircularProgress sx={{m:"1.5rem"}}/>)
+                
              }
        </Grid>
         </Grid>
@@ -133,8 +153,8 @@ function UserAccount() {
               posts?(
                 posts.length!=0?(
                  posts.map((singledoc,index)=>
-                  <Latest title={singledoc.title} content={singledoc.content} date={singledoc.$createdAt} fileid={singledoc.$id} ownerName={singledoc.ownerName} key={index}/>)
-                ):null
+                  <Latest title={singledoc.title} content={singledoc.content} date={singledoc.$createdAt} fileid={singledoc.$id} authorid={singledoc.userid} key={index}/>)
+                ):<Box sx={{display:"flex",justifyContent:"center",width:"100dvw",color:"white"}}>Not Posted Yet</Box>
               ):<Box sx={{display:"flex",justifyContent:"center",width:"100dvw"}}> <CircularProgress/></Box>
              }
           </Box>

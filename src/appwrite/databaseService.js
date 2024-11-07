@@ -42,7 +42,7 @@ class databaseService{
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_COLLECTION_ID,
                 [
-                    // Query.orderDesc('$createdAt'),
+                    Query.orderDesc('$createdAt'),
                     Query.limit(10)]
 
              )
@@ -58,7 +58,7 @@ class databaseService{
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_COLLECTION_ID,
                [
-                //    Query.orderDesc('$createdAt'),
+                   Query.orderDesc('$createdAt'),
                    Query.cursorAfter(nextFileId),
                    Query.limit(10),
                 ]
@@ -75,9 +75,9 @@ class databaseService{
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_COLLECTION_ID,
                 [ 
+                    Query.orderDesc('$createdAt'),
                     Query.cursorBefore(beforeFileId),
                     Query.limit(10),
-                    // Query.orderDesc('$createdAt'),
                 ]
              )
         }
@@ -93,8 +93,8 @@ class databaseService{
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_COLLECTION_ID,
                 [
-                    // Query.orderDesc("$createdAt"),
                     Query.equal("userid",[userId]),
+                    Query.orderDesc("$createdAt"),
                     Query.limit(10)
                 ]
              )
