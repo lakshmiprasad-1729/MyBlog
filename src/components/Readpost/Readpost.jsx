@@ -60,7 +60,22 @@ export default function Readpost() {
           DatabaseService.getFileView(postDetails.imageid)
           .then((data)=>setImageUrl(data.href))
           .catch((error)=>setError(error))
-
+       
+          setCommentList(postDetails.comments);
+           
+          if(postDetails && currentUser){
+           if(postDetails.likes.length!==0){
+            AppwriteLikes.getLikeDetails(postDetails.$id,currentUser.$id)
+            .then(docdata=>setLikes(docdata.documents.length!==0?
+              {num:postDetails.likes.length,liked:docdata.documents[0]}
+              :{num:postDetails.likes.length,liked:false}))
+            .catch(error=>console.log(error))
+           }
+          }
+        else{
+          setLikes(false)
+        }
+    
 
         let postdate = new Date(postDetails.$createdAt.split("T")[0])
         let presentDate = new Date()
@@ -81,6 +96,7 @@ export default function Readpost() {
                 }
             }
           }
+
             AppwriteProfiles.getDocument(postDetails.userid)
             .then(data=>typeof data==='object'?setName(data.documents[0].name):setError(data))
             .catch(err=>setError(err))
@@ -99,21 +115,6 @@ export default function Readpost() {
       setSubscribeStatus(false);
 
        
-      setCommentList(postDetails.comments);
-           
-      if(postDetails && currentUser){
-       if(postDetails.likes.length!==0){
-        AppwriteLikes.getLikeDetails(postDetails.$id,currentUser.$id)
-        .then(docdata=>setLikes(docdata.documents.length!==0?
-          {num:postDetails.likes.length,liked:docdata.documents[0]}
-          :{num:postDetails.likes.length,liked:false}))
-        .catch(error=>console.log(error))
-       }
-      }
-    else{
-      setLikes(false)
-    }
-
     },[postDetails,currentUser])
 
 
@@ -146,8 +147,13 @@ export default function Readpost() {
         setAddCommentStatus(true)
         if(comment && comment!==''){
           const newComment= await AppwriteComments.createComment(postDetails.$id,currentUser.$id,comment,currentUser.name);
-          const  commenteddata = await DatabaseService.updateCommentRelation(postDetails,newComment.$id);
-          typeof commenteddata ==='object'?setCommentList(commenteddata.comments):setError(commenteddata);
+          const  commenteddata = await DatabaseService.updateCommentRelation(postDetails.$id,commentList,newComment.$id);
+          if(typeof commenteddata ==='object'){
+            setCommentList(commenteddata.comments)
+          }
+          else{
+            setError(commenteddata)
+          }
           setAddCommentStatus(false)
           setComment(false)
         }
@@ -246,8 +252,11 @@ export default function Readpost() {
               <Box sx={{display:"flex"}}>
               <Typography variant="subtitle1" pt="0.5rem" ml={"1rem"} color="white">{likes?likes.num:0}</Typography>
               <IconButton sx={{mr:"0.5rem"}} onClick={toggleLike} disabled={pointer}>
-               <ThumbUpIcon sx={{color:(likes?likes.liked?"blue":"whitesmoke":"whitesmoke"),}} />
+               <ThumbUpIcon sx={{color:(likes?likes.liked?"rgb(59 130 246)":"whitesmoke":"whitesmoke"),}} />
               </IconButton>
+              {pointer?<CircularProgress 
+               sx={{width:"0.5rem",px:'0.2rem'}}
+               />:''}
               </Box>
               <Box sx={{display:"flex"}}>
               <Typography variant="subtitle1" p={"0.35rem"} color="white">comments:</Typography>

@@ -255,31 +255,32 @@ class databaseService{
         }
     }
     
-    async updateCommentRelation(doc,commentid){
+    async updateCommentRelation(doc,comments,commentid){
         try {
-            // console.log(commentid)
+
             let ids =[];
-            doc.comments.map((singeledoc)=>
+            comments.map((singeledoc)=>
                 ids.push(singeledoc.$id)
-              )
-            if(doc.comments.length>0){
+             )
+
+            if(comments.length>0 && comments.length==ids.length){
                 return await this.database.updateDocument(
                     import.meta.env.VITE_APPWRITE_DATABASE_ID,
                     import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-                    doc.$id,
+                    doc,
                     {
                         comments:[
-                            commentid,
-                            ...ids
+                           ...ids,
+                           commentid
                         ]
                     }
                 )
-              }
-              else if(doc.comments.length===0){
+            }
+            else if(comments.length===0 && ids.length==0){
                 return await this.database.updateDocument(
                     import.meta.env.VITE_APPWRITE_DATABASE_ID,
                     import.meta.env.VITE_APPWRITE_COLLECTION_ID,
-                    doc.$id,
+                    doc,
                     {
                         comments:[
                             commentid

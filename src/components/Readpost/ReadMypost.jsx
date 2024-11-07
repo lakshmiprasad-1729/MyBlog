@@ -109,9 +109,16 @@ export default function ReadMyPost() {
     async function toggleLike(){
       setPointer(true);
       if(likes.liked){
-        await AppwriteLikes.removeLike(likes.liked.$id)===true?
-        setLikes({num:likes.num-1,liked:false}):
-        setError('error at removing like either due to network or incorrect request');
+        setLikes({num:likes.num-1,liked:likes.liked})
+        let res= await AppwriteLikes.removeLike(likes.liked.$id)
+       if(res!==true){
+         setError('error at removing like either due to network or incorrect request');
+        setLikes({num:likes.num+1,liked:likes.liked})
+       }
+       else{
+         setLikes({num:likes.num,liked:false})
+       }
+   
         setPointer(false);
       }
       else{
@@ -129,7 +136,7 @@ export default function ReadMyPost() {
       setAddCommentStatus(true)
       if(comment && comment!==''){
         const newComment= await AppwriteComments.createComment(postDetails.$id,currentUser.$id,comment,currentUser.name);
-        const  commenteddata = await DatabaseService.updateCommentRelation(postDetails,newComment.$id);
+        const  commenteddata = await DatabaseService.updateCommentRelation(postDetails.$id,commentList,newComment.$id);
         typeof commenteddata ==='object'?setCommentList(commenteddata.comments):setError(commenteddata);
         setAddCommentStatus(false)
         setComment(false)
@@ -194,9 +201,12 @@ export default function ReadMyPost() {
               <Box sx={{display:"flex"}}>
               <Typography variant="subtitle1" pt="0.5rem" ml={"1rem"} sx={{color:"white"}}>{likes?likes.num:0}</Typography>
               <IconButton sx={{mr:"0.5rem"}} onClick={toggleLike} disabled={pointer}>
-               <ThumbUpIcon sx={{color:(likes?likes.liked?"blue":"whitesmoke":"whitesmoke"),}} />
+               <ThumbUpIcon sx={{color:(likes?likes.liked?"rgb(59 130 246)":"whitesmoke":"whitesmoke"),}} />
               </IconButton>
               </Box>
+               {pointer?<CircularProgress 
+               sx={{width:"0.5rem",px:"0.25rem"}}
+               />:''}
               <Box sx={{display:"flex"}}>
               <Typography variant="subtitle1" p={"0.35rem"} color="white">comments:</Typography>
                 <IconButton sx={{color:"whitesmoke"}} onClick={()=>setExpanded(prev=>!prev)} aria-label="">
