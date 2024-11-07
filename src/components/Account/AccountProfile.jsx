@@ -42,7 +42,7 @@ function AccountProfile() {
         user?(
         <Grid container justifyContent={"center"} gap={2}>
            <Grid container alignItems={"center"}>
-           <Avatar sx={{bgcolor:'red',width:"4rem",height:"4rem",color:"white"}}>{user.name.charAt(0)}</Avatar>
+           <Avatar sx={{bgcolor:'red',width:"4rem",height:"4rem",color:"white"}}>{user?user.name.charAt(0):''}</Avatar>
             </Grid>
           <Grid>
            <Typography variant="h6" sx={{color:"white"}}>
@@ -63,7 +63,7 @@ function AccountProfile() {
               {subscribedAccounts?(
                 subscribedAccounts.length!==0?(
                    subscribedAccounts.map((singledoc,index)=>(
-                     <FollowersProfile key={index} docid={singledoc} handleLogin={()=>navigate(`/view-account/${singledoc.owner}`)}/>
+                     <FollowersProfile key={index} doc={singledoc} handleLogin={()=>navigate(`/view-account/${singledoc.owner}`)}/>
                         ))
                 ):<Typography sx={{display:"flex",justifyContent:"center",width:"100dvw",color:"white",textTransform:"capitalize"}} variant="h6"> No results exist</Typography>
                  

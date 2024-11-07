@@ -24,10 +24,11 @@ function stringToColor(string) {
 
 function UserProfile({doc,handleLogin}) {
     const [name,setName] = useState(false);
-  
     useEffect(()=>{
-      AppwriteProfiles.getDocument(doc.owner)
+      if(doc){
+        AppwriteProfiles.getDocument(doc.owner)
       .then(data=>data?data.documents?(setName(data.documents[0].name)):'':'')
+      }
     },[])
    
     return (
