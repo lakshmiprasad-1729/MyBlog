@@ -12,6 +12,7 @@ const StyledCard=styled(Card)(()=>({
     '&:hover':{
       backgroundColor:"transparent",
       cursor:'pointer',
+      outline:'2px solid  rgb(107 114 128)',
     }
   }))
   

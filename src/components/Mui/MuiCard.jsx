@@ -24,7 +24,12 @@ export default function MuiCard({imageid,title,content,date,authorid,fileid,comp
     return (
         <Grid size={{xs:11,md:6}}>
         <StyledCard
-        width="300px"
+        //  sx={{
+        //    width:"300px",
+        //    '&.hover':{
+        //     width:"310px"
+        //    }
+        //  }}
         variant='outlined'
         onClick={()=> component=="allposts"?navigate(`/read-post/${fileid}`):navigate(`/read-my-post/${fileid}`)}
         >

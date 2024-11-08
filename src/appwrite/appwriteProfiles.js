@@ -50,7 +50,8 @@ class appwriteProfiles {
                 import.meta.env.VITE_APPWRITE_PROFILESCOLLECTION_ID,
                 id,
                 {
-                    name:name
+                    name:name,
+                    searchname:name.toLocaleLowerCase().replace(/\s|[@#$%^_-]|[0-9]/g, "")
                 }
             )
             return true
