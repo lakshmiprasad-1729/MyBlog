@@ -117,12 +117,16 @@ const navItems=[
 
 
 async function HandleLogOut(){
-    setLoading(true)
-   await AuthService.Logout()
+    let status = confirm('are you really want to logout');
+    if(status)
+    {
+        setLoading(true)
+        await AuthService.Logout()
         dispatch(authLogout());
         localStorageService.logoutData();
         setuserStatus(false)
         navigate('/')
+    }
 }
 
 function handleDrawer(){
@@ -154,7 +158,7 @@ return(
                <img
                className='animate-spin'
                loading="lazy"
-               src={Sharingan} alt="imageLoading" />
+               src={Sharingan} alt="" />
               </ImageListItem>
                <Typography variant="body1" pt="0.4rem" sx={{fontWeight:700}} color="white">My Blog</Typography>
               </Box>

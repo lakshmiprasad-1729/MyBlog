@@ -161,7 +161,7 @@ export default function UpdatePost() {
         skin='oxide-dark'
         cloudChannel="7-dev"
         init={{
-          // height: 500, // Adjust the height as needed
+          setup:()=>setEditorStatus(true),
           license_key: 'gpl',
           selector:"textarea",
           content_css:'Editor.css',
@@ -211,7 +211,7 @@ export default function UpdatePost() {
      </Grid2>
      <Grid2>
      <CircularProgress sx={{display:(loadingStatus?"inline":"none"),marginRight:"1rem"}}/>
-     <Button type="submit" variant="contained">Submit</Button>
+     <Button type="submit"sx={{display:(loadingStatus?"none":"inline"),height:"2.5rem"}} variant="contained">Submit</Button>
      </Grid2>
    </Grid2>
 
