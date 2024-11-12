@@ -89,6 +89,7 @@ class appwriteProfiles {
             return  error.message
         }
     }
+
 }
 
 const AppwriteProfiles = new appwriteProfiles()

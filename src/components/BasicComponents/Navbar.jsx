@@ -64,23 +64,37 @@ export default function Navbar() {
     const [searchparams,setSearchParams] = useSearchParams();
     const [search,setSearch] = useState(false);
     const [accounts,setAccounts] = useState(false);
+    const [oauthstatus,setOauthstatus] = useState(true);
 
    
 useEffect(()=>{
     let user = JSON.parse(localStorageService.getData())
+    setuserStatus(user.userdata)
+    user.status?setOauthstatus(true):setOauthstatus(false);
+},[])
+
+useEffect(()=>{
     let q=searchparams.get('secret')
     let p=searchparams.get('userId')
-     if(!user.status && p && q ){
-      AuthService.google(p,q)
-      .then((data)=>typeof data==='object'?localStorageService.setData(data):null)
-      .catch((error)=>console.log(error)
-      )
-      setuserStatus(true)
+     if(oauthstatus==false && p && q){
+       console.log(oauthstatus)
+
+         ;(async()=>{
+           const oauth =await AuthService.google(p,q)
+            if(typeof oauth==='object'){
+            const result = await AuthService.getCurrentUser();
+            if(typeof result ==='object'){
+                console.log(result);
+               localStorageService.setData(result);
+               const profile = await AppwriteProfiles.getDocument(result.$id);
+               profile.documents.length>0?null:await AppwriteProfiles.createProfile(result.$id,result.name,result.email);
+               setOauthstatus(true);
+            }
+           }
+        })()
+     
     }
-    else
-    user.status?setuserStatus(true):setuserStatus(false)
-   
-},[])
+},[oauthstatus])
 
 useEffect(()=>{
    if(search && search!=''){
