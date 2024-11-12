@@ -109,7 +109,7 @@ class authService {
         try {
             this.account.createOAuth2Token(
                 OAuthProvider.Google,
-                "https://my-blog-laxmi-prasads-projects.vercel.app/account",
+                "https://my-blog-laxmi-prasads-projects.vercel.app/",
                 "https://my-blog-laxmi-prasads-projects.vercel.app/error",
             )
             // this.account.createOAu+th2Session
