@@ -77,14 +77,13 @@ useEffect(()=>{
     let q=searchparams.get('secret')
     let p=searchparams.get('userId')
      if(oauthstatus==false && p && q){
-       console.log(oauthstatus)
 
          ;(async()=>{
            const oauth =await AuthService.google(p,q)
             if(typeof oauth==='object'){
             const result = await AuthService.getCurrentUser();
             if(typeof result ==='object'){
-                console.log(result);
+                setuserStatus(result);
                localStorageService.setData(result);
                const profile = await AppwriteProfiles.getDocument(result.$id);
                profile.documents.length>0?null:await AppwriteProfiles.createProfile(result.$id,result.name,result.email);
